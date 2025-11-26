@@ -1,5 +1,5 @@
 {
-  "itemGroup.magic_girl_phone": "Example Mod Tab",
+  "item.magic_girl_phone.ema_phone": "Ema Phone",
 
   "magic_girl_phone.configuration.title": "Magic Girl Phone Configs",
   "magic_girl_phone.configuration.section.magic_girl_phone.common.toml": "Magic Girl Phone Configs",
