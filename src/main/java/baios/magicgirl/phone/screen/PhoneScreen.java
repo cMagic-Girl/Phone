@@ -1,0 +1,112 @@
+package baios.magicgirl.phone.screen;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import baios.magicgirl.phone.menu.PhoneMenu;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+
+
+
+public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements ModScreens.ScreenAccessor {
+    // 标题
+    private final Level world;
+    private final int x, y, z;
+    private final Player entity;
+    private EditBox message;
+    private boolean menuStateUpdateActive = false;
+    private static final ResourceLocation texture = ResourceLocation.parse("magic_girl_phone:textures/gui/phone_screen.png");
+
+
+
+    public PhoneScreen(PhoneMenu container, Inventory inventory, Component text) {
+        super(container, inventory, text);
+        this.world = container.world;
+        this.x = container.x;
+        this.y = container.y;
+        this.z = container.z;
+        this.entity = container.entity;
+        this.imageWidth = 320;
+        this.imageHeight = 200;
+
+        // 设置GUI的中心位置（可选）
+        this.leftPos = (this.width - this.imageWidth) / 2;
+        this.topPos = (this.height - this.imageHeight) / 2;
+
+    }
+    @Override
+    protected void init() {
+        super.init();
+        message = new EditBox(
+                this.font, // 字体
+                this.leftPos + 118, // X坐标（相对于GUI左侧偏移）
+                this.topPos + 173, // Y坐标（相对于GUI顶部偏移）
+                118, // 宽度
+                18, // 高度
+                Component.translatable("gui.magic_girl_phone.phone_screen.message") // 提示文本
+        );
+        message.setMaxLength(8192);
+
+        // 初始化GUI元素
+    }
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // 空实现，这样就不会渲染默认的'物品栏'标签和容器标题
+        // 如果你想添加自定义标题，可以在这里添加
+    }
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        // 启用混合模式以支持透明度
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderTexture(0, texture);
+
+        RenderSystem.setShaderColor(1, 1, 1, 1f);
+
+        guiGraphics.blit(texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(texture, this.leftPos + 109, this.topPos + 4, 0, 0, 176, 166, 176, 166);
+        // 禁用混合模式
+        RenderSystem.disableBlend();
+    }
+
+
+    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        message.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+
+
+    @Override
+    public void renderTransparentBackground(GuiGraphics guiGraphics) {
+        guiGraphics.fillGradient(0, 0, this.width, this.height, 0x00000000, 0x00000000);
+    }
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        // 调用父类的背景渲染方法（这会绘制游戏场景）
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+    }
+
+
+    @Override
+    public void updateMenuState(int elementType, String name, Object elementState) {
+        menuStateUpdateActive = true;
+        menuStateUpdateActive = false;
+    }
+    @Override
+    public boolean isPauseScreen() {
+        // 返回false表示这不是暂停界面（类似背包）
+        return false;
+    }
+}
+

@@ -1,5 +1,7 @@
 {
   "item.magic_girl_phone.ema_phone": "Ema Phone",
+  "gui.magic_girl_phone.ema_phone": "Ema Phone",
+  "gui.magic_girl_phone.phone_screen.message": "message",
 
   "magic_girl_phone.configuration.title": "Magic Girl Phone Configs",
   "magic_girl_phone.configuration.section.magic_girl_phone.common.toml": "Magic Girl Phone Configs",

@@ -1,0 +1,84 @@
+package baios.magicgirl.phone.menu;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import static baios.magicgirl.phone.menu.ModMenus.PHONE_MENU;
+
+
+public class PhoneMenu extends AbstractContainerMenu implements ModMenus.MenuAccessor{
+    public final Map<String, Object> menuState = new HashMap<>() {
+        @Override
+        public Object put(String key, Object value) {
+            if (!this.containsKey(key) && this.size() >= 1)
+                return null;
+            return super.put(key, value);
+        }
+    };
+    public final Level world;
+    public final Player entity;
+    public int x, y, z;
+    private ContainerLevelAccess access = ContainerLevelAccess.NULL;
+    private IItemHandler internal;
+    private final Map<Integer, Slot> customSlots = new HashMap<>();
+    private boolean bound = false;
+    private Supplier<Boolean> boundItemMatcher = null;
+    private Entity boundEntity = null;
+    private BlockEntity boundBlockEntity = null;
+
+
+    public PhoneMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
+        super(ModMenus.PHONE_MENU.get(), id);
+        this.entity = inv.player;
+        this.world = inv.player.level();
+        this.internal = new ItemStackHandler(0);
+        BlockPos pos = null;
+        if (extraData != null) {
+            pos = extraData.readBlockPos();
+            this.x = pos.getX();
+            this.y = pos.getY();
+            this.z = pos.getZ();
+            access = ContainerLevelAccess.create(world, pos);
+        }
+    }
+
+
+
+    @Override
+    public @NotNull ItemStack quickMoveStack(Player playerIn, int index) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean stillValid(@NotNull Player player) {
+        return true;
+    }
+
+    @Override
+    public Map<String, Object> getMenuState() {
+        return Map.of();
+    }
+
+    @Override
+    public Map<Integer, Slot> getSlots() {
+        return Map.of();
+    }
+}
