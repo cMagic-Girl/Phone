@@ -17,6 +17,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -68,17 +69,25 @@ public class PhoneMenu extends AbstractContainerMenu implements ModMenus.MenuAcc
     }
 
     @Override
-    public boolean stillValid(@NotNull Player player) {
+    public boolean stillValid(Player player) {
+        if (this.bound) {
+            if (this.boundItemMatcher != null)
+                return this.boundItemMatcher.get();
+            else if (this.boundBlockEntity != null)
+                return AbstractContainerMenu.stillValid(this.access, player, this.boundBlockEntity.getBlockState().getBlock());
+            else if (this.boundEntity != null)
+                return this.boundEntity.isAlive();
+        }
         return true;
     }
 
     @Override
     public Map<String, Object> getMenuState() {
-        return Map.of();
+        return menuState;
     }
 
     @Override
     public Map<Integer, Slot> getSlots() {
-        return Map.of();
+        return Collections.unmodifiableMap(customSlots);
     }
 }
