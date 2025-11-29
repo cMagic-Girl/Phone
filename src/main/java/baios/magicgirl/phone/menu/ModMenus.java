@@ -18,6 +18,7 @@ import java.util.Map;
 public class ModMenus {
     public static final DeferredRegister<MenuType<?>> REGISTRY = DeferredRegister.create(Registries.MENU, MagicGirlPhone.MODID);
     public static final DeferredHolder<MenuType<?>, MenuType<PhoneMenu>> PHONE_MENU = REGISTRY.register("phone_screen", () -> IMenuTypeExtension.create(PhoneMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<PhoneMainMenu>> PHONE_MAIN_MENU = REGISTRY.register("phone_main_screen", () -> IMenuTypeExtension.create(PhoneMainMenu::new));
 
     public interface MenuAccessor {
         Map<String, Object> getMenuState();
