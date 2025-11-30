@@ -1,11 +1,14 @@
 {
   "item.magic_girl_phone.ema_phone": "艾玛的手机",
-  "gui.magic_girl_phone.ema_phone": "1",
+
+  "gui.magic_girl_phone.ema_phone": "艾玛的手机",
   "gui.magic_girl_phone.phone_screen.message": "message",
   "gui.magic_girl_phone.phone_screen.player_list": "玩家列表",
   "gui.magic_girl_phone.phone_screen.send_button": "发送",
   "gui.magic_girl_phone.phone_screen.home": "主页",
   "gui.magic_girl_phone.phone_screen.chat_app": "聊天",
+  "gui.magic_girl_phone.phone_screen.recorder_app": "录音",
+  "gui.magic_girl_phone.phone_screen.recorder_start":"开始录音",
 
   "magic_girl_phone.configuration.title": "Magic Girl Phone Configs",
   "magic_girl_phone.configuration.section.magic_girl_phone.common.toml": "Magic Girl Phone Configs",

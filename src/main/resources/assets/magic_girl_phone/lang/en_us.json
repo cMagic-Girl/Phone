@@ -6,6 +6,8 @@
   "gui.magic_girl_phone.phone_screen.send_button": "Send",
   "gui.magic_girl_phone.phone_screen.home": "Home",
   "gui.magic_girl_phone.phone_screen.chat_app": "Chat",
+  "gui.magic_girl_phone.phone_screen.recorder_app": "Recorder",
+  "gui.magic_girl_phone.phone_screen.recorder_start": "Start",
 
 
   "magic_girl_phone.configuration.title": "Magic Girl Phone Configs",

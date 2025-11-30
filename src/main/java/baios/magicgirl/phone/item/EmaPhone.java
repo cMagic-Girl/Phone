@@ -3,6 +3,7 @@ package baios.magicgirl.phone.item;
 import baios.magicgirl.phone.menu.PhoneMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -13,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class EmaPhone extends Item {
+
+
     public EmaPhone() {
         super(new Item.Properties().stacksTo(1));
     }

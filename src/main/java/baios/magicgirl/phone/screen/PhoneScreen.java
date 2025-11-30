@@ -13,17 +13,17 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 
-import java.awt.*;
-
 
 public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements ModScreens.ScreenAccessor {
     // 标题
     private final Level world;
     private final int x, y, z;
     private final Player entity;
-    private EditBox message;
+    private EditBox messageInputBox;
     private boolean menuStateUpdateActive = false;
-    private static final ResourceLocation texture = ResourceLocation.parse("magic_girl_phone:textures/gui/phone_screen.png");
+    private static final ResourceLocation phoneScreenMain = ResourceLocation.parse("magic_girl_phone:textures/gui/phone_screen.png");
+    private static final ResourceLocation phoneScreenSidebar=ResourceLocation.parse("magic_girl_phone:textures/gui/phone_screen_sidebar.png");
+
     private int screenID = 0;
 
 
@@ -34,47 +34,65 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.y = container.y;
         this.z = container.z;
         this.entity = container.entity;
-        this.imageWidth = 320;
+        this.imageWidth = 355;
         this.imageHeight = 200;
-
     }
+
+
 
     @Override
     protected void init() {
         super.init();
 
-        Button button_empty = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.send_button"), e -> {
-            String msg = message.getValue();
+        Button sendMessageButton = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.send_button"), e -> {
+            String msg = messageInputBox.getValue();
             if (entity != null) {
-                this.screenID = 1;
-                message.setPosition(this.leftPos + 30, this.topPos + 173);
+
+                messageInputBox.setPosition(this.leftPos + 30, this.topPos + 173);
                 entity.displayClientMessage(Component.literal(msg), false);
             }
 
         }).bounds(this.leftPos + 280, this.topPos + 173, 30, 18).build();
-        this.addRenderableWidget(button_empty);
+        this.addRenderableWidget(sendMessageButton);
+
+        Button recorderButton = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.recorder_start"), e -> {
+
+
+        }).bounds(this.leftPos + 200, this.topPos + 100, 60, 36).build();
+        this.addRenderableWidget(recorderButton);
 
         Button home = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.home"), e -> {
             this.screenID = 0;
-            message.visible = false;
-            button_empty.visible = false;
-            String msg = message.getValue();
-        }).bounds(this.leftPos + 1, this.topPos + 1, 23, 23).build();
+            messageInputBox.visible = false;
+            recorderButton.visible = false;
+            sendMessageButton.visible = false;
+
+        }).bounds(this.leftPos + 2, this.topPos + 3, 24, 24).build();
         this.addRenderableWidget(home);
 
         Button chatApp = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.chat_app"), e -> {
             this.screenID = 1;
-            message.visible=true;
-            button_empty.visible = true;
-            String msg = message.getValue();
+            messageInputBox.visible=true;
+            sendMessageButton.visible = true;
+            String msg = messageInputBox.getValue();
             if (entity != null) {
                 entity.displayClientMessage(Component.literal(msg), false);
             }
 
-        }).bounds(this.leftPos + 1, this.topPos + 26, 23, 23).build();
+        }).bounds(this.leftPos +2, this.topPos + 28, 24, 24).build();
         this.addRenderableWidget(chatApp);
 
-        message = new EditBox(
+        Button recorderApp = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.recorder_app"), e -> {
+            this.screenID = 2;
+
+            messageInputBox.visible = false;
+            sendMessageButton.visible = false;
+
+            recorderButton.visible = true;
+        }).bounds(this.leftPos +2, this.topPos + 53, 24, 24).build();
+        this.addRenderableWidget(recorderApp);
+
+        messageInputBox = new EditBox(
                 this.font, // 字体
                 this.leftPos + 110, // X坐标（相对于GUI左侧偏移）
                 this.topPos + 173, // Y坐标（相对于GUI顶部偏移）
@@ -82,21 +100,32 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 18, // 高度
                 Component.translatable("gui.magic_girl_phone.phone_screen.message")// 提示文本
         );
-        message.setMaxLength(8192);
-        message.setResponder(content -> {
+        messageInputBox.setMaxLength(8192);
+        messageInputBox.setResponder(content -> {
             if (!menuStateUpdateActive)
                 menu.sendMenuStateUpdate(entity, 0, "message", content, false);
         });
-        this.addWidget(this.message);
+        this.addWidget(this.messageInputBox);
 
-
+        if (screenID == 0) {
+            messageInputBox.visible = false;
+            sendMessageButton.visible = false;
+        }
     }
 
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // 空实现，这样就不会渲染默认的'物品栏'标签和容器标题
-        guiGraphics.drawString(this.font, Component.translatable("gui.magic_girl_phone.phone_screen.player_list"), 30, 4, -12829636, false);
+        long dayTime = world.getDayTime();
+        int hour = (int) (dayTime % 24000 / 1000);
+        int minute = (int) (dayTime % 1000 / 20);
+        String time = String.format("%02d:%02d", hour, minute);
+        guiGraphics.drawString(this.font, Component.literal(time), 0, 195, -12829636, false);
+        if (screenID == 1) {
+
+        }
+
         // 如果你想添加自定义标题，可以在这里添加
     }
 
@@ -105,16 +134,16 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         // 启用混合模式以支持透明度
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderTexture(0, texture);
+        RenderSystem.setShaderTexture(0, phoneScreenMain);
         RenderSystem.setShaderColor(1, 1, 1, 1f);
 
         //渲染主要背景
-        guiGraphics.blit(texture, this.leftPos, this.topPos, 0, 0, 25, this.imageHeight, 25, this.imageHeight);
-        guiGraphics.blit(texture, this.leftPos + 30, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(phoneScreenSidebar, this.leftPos, this.topPos, 0, 0, 30, this.imageHeight, 30, this.imageHeight);
+        guiGraphics.blit(phoneScreenMain, this.leftPos + 32, this.topPos, 0, 0, 320, this.imageHeight, 320, this.imageHeight);
 
         //根据
         if (screenID == 1) {
-            guiGraphics.blit(texture, this.leftPos + 110, this.topPos + 5, 0, 0, 200, 160, 200, 160);
+            guiGraphics.blit(phoneScreenMain, this.leftPos + 110, this.topPos + 5, 0, 0, 200, 160, 200, 160);
             // 禁用混合模式
         }
 
@@ -127,7 +156,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
-        message.render(guiGraphics, mouseX, mouseY, partialTicks);
+        messageInputBox.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
@@ -139,16 +168,16 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             return true;
         }
         //文本输入框
-        if (message.isFocused())
-            return message.keyPressed(key, b, c);
+        if (messageInputBox.isFocused())
+            return messageInputBox.keyPressed(key, b, c);
         return super.keyPressed(key, b, c);
     }
 
     @Override
     public void resize(Minecraft minecraft, int width, int height) {
-        String messageValue = message.getValue();
+        String messageValue = messageInputBox.getValue();
         super.resize(minecraft, width, height);
-        message.setValue(messageValue);
+        messageInputBox.setValue(messageValue);
     }
 
     // 自定义背景渲染
@@ -169,7 +198,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         menuStateUpdateActive = true;
         if (elementType == 0 && elementState instanceof String stringState) {
             if (name.equals("message"))
-                message.setValue(stringState);
+                messageInputBox.setValue(stringState);
         }
         menuStateUpdateActive = false;
     }
