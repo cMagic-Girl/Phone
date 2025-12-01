@@ -10,9 +10,11 @@ public class ModItems {
             DeferredRegister.createItems(MagicGirlPhone.MODID);
 
     public static final DeferredItem<Item> EMA_PHONE;
+    public static final DeferredItem<Item> HIRO_PHONE;
 
     static {
         EMA_PHONE = Registries.register("ema_phone",EmaPhone::new);
+        HIRO_PHONE = Registries.register("hiro_phone",HiroPhone::new);
     }
 
 }

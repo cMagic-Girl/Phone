@@ -1,5 +1,7 @@
 {
   "item.magic_girl_phone.ema_phone": "Ema Phone",
+  "item.magic_girl_phone.hiro_phone": "Hiro Phone",
+
   "gui.magic_girl_phone.ema_phone": "Ema Phone",
   "gui.magic_girl_phone.phone_screen.message": "message",
   "gui.magic_girl_phone.phone_screen.player_list": "Player List",

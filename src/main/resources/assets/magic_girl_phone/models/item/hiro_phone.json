@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "magic_girl_phone:item/ema_phone_black_screen"
+  }
+}

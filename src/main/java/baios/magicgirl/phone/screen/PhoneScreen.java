@@ -110,6 +110,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         if (screenID == 0) {
             messageInputBox.visible = false;
             sendMessageButton.visible = false;
+            recorderButton.visible = false;
         }
     }
 
