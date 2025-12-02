@@ -22,8 +22,8 @@ public class SoundRecorder {
         Vec3 soundPos = getSoundSourcePosition(event);
         if (soundPos != null) {
             // 输出声音位置信息
-            System.out.printf("声音位置：X=%.2f, Y=%.2f, Z=%.2f%n",
-                    soundPos.x, soundPos.y, soundPos.z);
+            //System.out.printf("声音位置：X=%.2f, Y=%.2f, Z=%.2f%n",
+                    //soundPos.x, soundPos.y, soundPos.z);
 
             // 可结合玩家位置计算距离
             // Vec3 playerPos = Minecraft.getInstance().player.position();

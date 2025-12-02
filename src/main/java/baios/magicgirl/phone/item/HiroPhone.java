@@ -10,6 +10,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class HiroPhone extends Item {
 
@@ -35,5 +40,4 @@ public class HiroPhone extends Item {
         // 返回结果：成功触发，保留物品栈
         return super.use(level, player, hand);
     }
-
 }

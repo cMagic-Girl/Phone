@@ -1,5 +1,6 @@
 package baios.magicgirl.phone.screen;
 
+import baios.magicgirl.phone.data.MyData;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -12,6 +13,7 @@ import baios.magicgirl.phone.menu.PhoneMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 
 public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements ModScreens.ScreenAccessor {
@@ -47,10 +49,13 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         Button sendMessageButton = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.send_button"), e -> {
             String msg = messageInputBox.getValue();
             if (entity != null) {
-
-                messageInputBox.setPosition(this.leftPos + 30, this.topPos + 173);
                 entity.displayClientMessage(Component.literal(msg), false);
             }
+            int age =18;
+            MyData payload = new MyData(msg, age);
+            messageInputBox.setValue("");
+            // 2. 通过PacketDistributor发送到服务端
+            PacketDistributor.sendToServer(payload);
 
         }).bounds(this.leftPos + 280, this.topPos + 173, 30, 18).build();
         this.addRenderableWidget(sendMessageButton);
