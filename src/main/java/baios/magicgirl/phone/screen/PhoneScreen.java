@@ -19,12 +19,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements ModScreens.ScreenAccessor {
     // 标题
     private final Level world;
-    private final int x, y, z;
     private final Player entity;
+    private final String phoneName;
     private EditBox messageInputBox;
     private boolean menuStateUpdateActive = false;
     private static final ResourceLocation phoneScreenMain = ResourceLocation.parse("magic_girl_phone:textures/gui/phone_screen.png");
-    private static final ResourceLocation phoneScreenSidebar=ResourceLocation.parse("magic_girl_phone:textures/gui/phone_screen_sidebar.png");
+    private static final ResourceLocation phoneScreenSidebar = ResourceLocation.parse("magic_girl_phone:textures/gui/phone_screen_sidebar.png");
 
     private int screenID = 0;
 
@@ -32,14 +32,17 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     public PhoneScreen(PhoneMenu container, Inventory inventory, Component text) {
         super(container, inventory, text);
         this.world = container.world;
-        this.x = container.x;
-        this.y = container.y;
-        this.z = container.z;
         this.entity = container.entity;
+        if (container.phoneName == null) {
+            this.phoneName = "Phone";
+        }else {
+            this.phoneName = container.phoneName;
+        }
+
         this.imageWidth = 355;
         this.imageHeight = 200;
-    }
 
+    }
 
 
     @Override
@@ -51,7 +54,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             if (entity != null) {
                 entity.displayClientMessage(Component.literal(msg), false);
             }
-            int age =18;
+            int age = 18;
             MyData payload = new MyData(msg, age);
             messageInputBox.setValue("");
             // 2. 通过PacketDistributor发送到服务端
@@ -77,14 +80,14 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
         Button chatApp = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.chat_app"), e -> {
             this.screenID = 1;
-            messageInputBox.visible=true;
+            messageInputBox.visible = true;
             sendMessageButton.visible = true;
             String msg = messageInputBox.getValue();
             if (entity != null) {
                 entity.displayClientMessage(Component.literal(msg), false);
             }
 
-        }).bounds(this.leftPos +2, this.topPos + 28, 24, 24).build();
+        }).bounds(this.leftPos + 2, this.topPos + 28, 24, 24).build();
         this.addRenderableWidget(chatApp);
 
         Button recorderApp = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.recorder_app"), e -> {
@@ -94,7 +97,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             sendMessageButton.visible = false;
 
             recorderButton.visible = true;
-        }).bounds(this.leftPos +2, this.topPos + 53, 24, 24).build();
+        }).bounds(this.leftPos + 2, this.topPos + 53, 24, 24).build();
         this.addRenderableWidget(recorderApp);
 
         messageInputBox = new EditBox(
@@ -120,20 +123,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     }
 
 
-    @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // 空实现，这样就不会渲染默认的'物品栏'标签和容器标题
-        long dayTime = world.getDayTime();
-        int hour = (int) (dayTime % 24000 / 1000);
-        int minute = (int) (dayTime % 1000 / 20);
-        String time = String.format("%02d:%02d", hour, minute);
-        guiGraphics.drawString(this.font, Component.literal(time), 0, 195, -12829636, false);
-        if (screenID == 1) {
 
-        }
-
-        // 如果你想添加自定义标题，可以在这里添加
-    }
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
@@ -156,6 +146,19 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         RenderSystem.disableBlend();
     }
 
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // 空实现，这样就不会渲染默认的'物品栏'标签和容器标题
+        long dayTime = world.getDayTime();
+        int hour = (int) (dayTime % 24000 / 1000);
+        int minute = (int) (dayTime % 1000 / 20);
+        String time = String.format("%02d:%02d", hour, minute);
+        guiGraphics.drawString(this.font, Component.literal(time), 0, 195, -12829636, false);
+        if (screenID == 0) {
+            guiGraphics.drawString(this.font, Component.literal(this.phoneName), 0, 150, -12829636, false);
+        }
+
+    }
 
     //每一帧都会调用该渲染方法
     @Override

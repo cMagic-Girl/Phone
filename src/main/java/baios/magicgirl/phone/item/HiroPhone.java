@@ -1,6 +1,7 @@
 package baios.magicgirl.phone.item;
 
 import baios.magicgirl.phone.menu.PhoneMenu;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -10,11 +11,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.saveddata.SavedData;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class HiroPhone extends Item {
 
@@ -28,13 +24,14 @@ public class HiroPhone extends Item {
         ItemStack itemStack = player.getItemInHand(hand);
         // 仅在服务端执行逻辑（避免客户端重复触发）
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            //Minecraft.getInstance().setScreen(new PhoneGui(new PhoneMenu(player.getInventory().selected, player.getInventory()),player.getInventory(), Component.translatable("gui.magic_girl_phone.ema_phone")));
 
-            serverPlayer.openMenu(new SimpleMenuProvider(
-                    (containerId, playerInventory,player1) -> new PhoneMenu(containerId, playerInventory, null),
-                    Component.translatable("menu.title.examplemod.mymenu")
-            ));
-
+            serverPlayer.openMenu(
+                    new SimpleMenuProvider(
+                            (containerId, playerInventory, player1) -> new PhoneMenu(containerId, playerInventory, null),
+                            Component.translatable("menu.title.examplemod.mymenu")
+                    ),
+                    (RegistryFriendlyByteBuf buf) -> buf.writeUtf("hiro_phone")
+            );
         }
 
         // 返回结果：成功触发，保留物品栈
