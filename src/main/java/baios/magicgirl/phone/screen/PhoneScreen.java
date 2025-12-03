@@ -21,8 +21,12 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     private final Level world;
     private final Player entity;
     private final String phoneName;
+
+    private int phoneHeight,phoneWidth,phonePosX,phonePosY;
+
     private EditBox messageInputBox;
     private boolean menuStateUpdateActive = false;
+    private static final ResourceLocation phoneBackground = ResourceLocation.parse("magic_girl_phone:textures/gui/background.png");
     private static final ResourceLocation phoneScreenMain = ResourceLocation.parse("magic_girl_phone:textures/gui/phone_screen.png");
     private static final ResourceLocation phoneScreenSidebar = ResourceLocation.parse("magic_girl_phone:textures/gui/phone_screen_sidebar.png");
 
@@ -39,9 +43,16 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             this.phoneName = container.phoneName;
         }
 
-        this.imageWidth = 355;
+        // 设置GUI的宽高
+        this.imageWidth = 360;
         this.imageHeight = 200;
 
+        this.phoneWidth =100;
+        this.phoneHeight = 200;
+
+        //这里初始化的位置其实存在问题，因为在blit前leftPos和topPos为0
+        this.phonePosX =this.leftPos + this.imageWidth / 2 - this.phoneWidth / 2;
+        this.phonePosY =this.topPos + this.imageHeight / 2 - this.phoneHeight / 2;
     }
 
 
@@ -75,7 +86,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             recorderButton.visible = false;
             sendMessageButton.visible = false;
 
-        }).bounds(this.leftPos + 2, this.topPos + 3, 24, 24).build();
+        }).bounds(this.leftPos + (this.imageWidth / 2) -12, this.topPos+175, 24, 24).build();
         this.addRenderableWidget(home);
 
         Button chatApp = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.chat_app"), e -> {
@@ -133,9 +144,13 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         RenderSystem.setShaderTexture(0, phoneScreenMain);
         RenderSystem.setShaderColor(1, 1, 1, 1f);
 
-        //渲染主要背景
-        guiGraphics.blit(phoneScreenSidebar, this.leftPos, this.topPos, 0, 0, 30, this.imageHeight, 30, this.imageHeight);
-        guiGraphics.blit(phoneScreenMain, this.leftPos + 32, this.topPos, 0, 0, 320, this.imageHeight, 320, this.imageHeight);
+        guiGraphics.blit(phoneBackground, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+
+        this.phonePosX =this.leftPos + this.imageWidth / 2 - this.phoneWidth / 2;
+        this.phonePosY =this.topPos + this.imageHeight / 2 - this.phoneHeight / 2;
+
+        //渲染手机
+        guiGraphics.blit(phoneScreenMain, this.phonePosX, this.phonePosY, 0, 0, this.phoneWidth, this.phoneHeight, this.phoneWidth, this.phoneHeight);
 
         //根据
         if (screenID == 1) {
@@ -153,9 +168,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         int hour = (int) (dayTime % 24000 / 1000);
         int minute = (int) (dayTime % 1000 / 20);
         String time = String.format("%02d:%02d", hour, minute);
-        guiGraphics.drawString(this.font, Component.literal(time), 0, 195, -12829636, false);
+        guiGraphics.drawString(this.font, Component.literal(time), 0, 185, -12829636, false);
         if (screenID == 0) {
-            guiGraphics.drawString(this.font, Component.literal(this.phoneName), 0, 150, -12829636, false);
+            guiGraphics.drawString(this.font, Component.literal(this.phoneName), 45, 5, -12829636, false);
         }
 
     }
