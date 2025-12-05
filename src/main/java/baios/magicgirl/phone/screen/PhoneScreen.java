@@ -205,7 +205,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     }
 
-    // ========== 核心：Screen处理选中逻辑（业务代码写在这里） ==========
+    //聊天对象处理选中逻辑
     private void onPlayerSelected(ChatPlayerEntry selectedEntry) {
         if (selectedEntry == null) {
             this.chatTarget = "default";
@@ -331,7 +331,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     // 渲染标签
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // 空实现，这样就不会渲染默认的'物品栏'标签和容器标题
+
         long dayTime = world.getDayTime();
         int hour = (int) (dayTime % 24000 / 1000) + 6;
         if (hour >= 24) {
@@ -370,7 +370,10 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     public boolean keyPressed(int key, int b, int c) {
         if (key == 256) {
             this.minecraft.player.closeContainer();
-            return true;
+            return true;        }
+        System.out.println("key: " + key);
+        if (key == 257 && screenID==screenType.CHAT&& !Objects.equals(this.chatTarget, "default")) {
+            this.sendMessageButton.onPress();
         }
         //文本输入框
         if (messageInputBox.isFocused())
