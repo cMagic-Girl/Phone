@@ -57,6 +57,8 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     // GUI状态
     private String chatTarget = "default";
 
+    private List<String> playerList=List.of( "ema_phone", "hiro_phone", "koko_phone", "sherii_phone", "hanna_phone", "anan_phone", "noa_phone", "reia_phone", "miria_phone", "nanoka_phone", "maago_phone", "arisa_phone", "meruru_phone");
+
     // 玩家信息映射
     protected Map<String, String> playerMap = Map.ofEntries(
             Map.entry("ema_phone", "ema"),
@@ -74,6 +76,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             Map.entry("meruru_phone", "meruru")
     );
 
+    // 头像映射
     protected Map<String, ResourceLocation> avatarMap = Map.ofEntries(
             Map.entry("ema_phone", emaAvatar),
             Map.entry("hiro_phone", hiroAvatar),
@@ -188,11 +191,12 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.chatPlayerList.setX(this.leftPos + 4);
         this.chatPlayerList.setY(this.topPos + 15);
 
-        for (String phoneName : playerMap.keySet()) {
+        for (String phoneName : playerList) {
             if (Objects.equals(phoneName, this.phoneName)) {
                 continue;
             }
             String playerName = playerMap.get(phoneName);
+            System.out.println("添加玩家：" + playerName);
             this.chatPlayerList.addPlayerEntry(avatarMap.get(phoneName), playerName, () -> this.onPlayerSelected(this.chatPlayerList.getSelectedEntry().orElse(null)));
         }
 
@@ -219,8 +223,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.chatTarget = selectedEntry.getPlayerName();
     }
 
+    // 切换屏幕
     protected void screenComponentManager(int screenID) {
-        // 切换屏幕
+
         switch (screenID) {
             case screenType.HOME:
                 this.screenID = screenType.HOME;
