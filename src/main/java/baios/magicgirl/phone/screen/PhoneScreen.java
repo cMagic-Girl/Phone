@@ -47,6 +47,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     private Button sendMessageButton;
     private Button recorderButton;
     private EditBox messageInputBox;
+    private ChatPlayerList chatPlayerList;
 
     // 以下是组件定位
     private int timeLabelX=212;
@@ -71,6 +72,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
         //这里初始化的位置其实存在问题，因为在blit前leftPos和topPos为0
         this.phonePosX = this.leftPos + this.imageWidth / 2 - this.phoneWidth / 2;
+
 
     }
 
@@ -133,7 +135,22 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         });
         this.addWidget(this.messageInputBox);
 
+        this.chatPlayerList=new ChatPlayerList( this.minecraft,90, 150, this.topPos, 20);
+        this.chatPlayerList.setX(this.leftPos);
+        this.chatPlayerList.setY(this.topPos);
+        this.chatPlayerList.addEntrys();
+        this.chatPlayerList.addEntrys();
+        this.chatPlayerList.addEntrys();this.chatPlayerList.addEntrys();
+
+
+        // 添加列表到屏幕
+        this.addWidget(this.chatPlayerList);
+
+
+
         this.screenComponentManager(screenID);
+
+
     }
 
 
@@ -259,6 +276,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         messageInputBox.render(guiGraphics, mouseX, mouseY, partialTicks);
+        chatPlayerList.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
