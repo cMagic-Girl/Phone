@@ -1,6 +1,6 @@
 package baios.magicgirl.phone.screen;
 
-import baios.magicgirl.phone.data.MyData;
+import baios.magicgirl.phone.data.ChatMessage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -23,7 +23,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     private final Level world;
     private final Player entity;
     private final String phoneName;
+    private final String phoneOwer;
     private int phoneHeight, phoneWidth, phonePosX;
+    public String test="test";
 
     private boolean menuStateUpdateActive = false;
 
@@ -115,6 +117,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
         // 获取手机名称
         this.phoneName = Objects.requireNonNullElse(container.phoneName, "phone");
+        this.phoneOwer = playerMap.get(phoneName);
 
         // 设置GUI的宽高
         this.imageWidth = 360;
@@ -155,12 +158,11 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.sendMessageButton = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.send_button"), e -> {
             String msg = messageInputBox.getValue();
 
-            int age = 18;
-            MyData payload = new MyData(msg, age);
-            entity.sendSystemMessage(Component.literal(playerMap.get(phoneName) +"向"+this.chatTarget+"发送消息了:"+ msg));
+            ChatMessage payload = new ChatMessage(chatTarget, this.phoneOwer, msg,(int)this.world.getDayTime());
+            //entity.sendSystemMessage(Component.literal(playerMap.get(phoneName) +"向"+this.chatTarget+"发送消息了:"+ msg));
             messageInputBox.setValue("");
             // 2. 通过PacketDistributor发送到服务端
-            //PacketDistributor.sendToServer(payload);
+            PacketDistributor.sendToServer(payload);
 
         }).bounds(this.leftPos + 300, this.topPos + 173, 30, 18).build();
         this.addRenderableWidget(sendMessageButton);
@@ -324,6 +326,13 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                     0xFFFFFF // 文本颜色
             );
         });
+        String tip = "服务器返回：" + this.test;
+        guiGraphics.drawString(
+                this.font,
+                Component.literal(tip),
+                100, 10, // 提示文本坐标
+                0xFFFFFF // 文本颜色
+        );
     }
 
     protected void renderScreen(GuiGraphics guiGraphics) {
