@@ -55,6 +55,18 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         int Vscode = 3;
         int SETTING = 4;
     }
+    // 滑动动画状态
+    private boolean transitioning = false;       // 是否正在过渡
+    private int transitionTicks = 0;             // 当前过渡帧数
+    private int transitionDuration = 30;         // 动画总帧数（建议 10~16）
+    private int currentScreenID = screenType.HOME; // 当前界面（用于动画绘制）
+    private int targetScreenID = -1;             // 目标界面
+    private boolean slideToApp = false;          // true=HOME→APP，false=APP→HOME
+    // 位置缓存
+    private int centerPhoneX; // 手机居中时的X
+    private int leftPhoneX;   // 手机靠左时的X
+    // 控件延迟显示标记
+    private boolean pendingApplyScreen = false;
 
     private int screenID = screenType.HOME;
 
@@ -148,7 +160,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 this.topPos + 167,
                 20, 20,
                 icon,
-                e -> this.screenComponentManager(screenType.HOME)
+                e -> startTransition(screenType.HOME)
         );
         this.addRenderableWidget(home);
 
@@ -159,7 +171,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 this.leftPos + 137, this.topPos + 30,
                 25, 25,
                 chatIcon,
-                e -> this.screenComponentManager(screenType.CHAT)
+                e -> startTransition(screenType.CHAT)
         );
         this.addRenderableWidget(chatApp);
 
@@ -169,7 +181,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 this.leftPos + 167, this.topPos + 30,
                 25, 25,
                 recorderIcon,
-                e -> this.screenComponentManager(screenType.Recorder)
+                e -> startTransition(screenType.Recorder)
         );
         this.addRenderableWidget(recorderApp);
 
@@ -179,7 +191,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 this.leftPos + 197, this.topPos + 30,
                 25, 25,
                 vscodeIcon,
-                e -> this.screenComponentManager(screenType.Vscode)
+                e -> startTransition(screenType.Vscode)
         );
         this.addRenderableWidget(vscodeApp);
 
@@ -321,56 +333,71 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        // 启用混合模式以支持透明度
+    protected void renderBg(GuiGraphics g, float pt, int mouseX, int mouseY) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderTexture(0, phoneScreenMain);
-        RenderSystem.setShaderColor(1, 1, 1, 1f);
 
-        guiGraphics.blit(phoneBackground, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        g.blit(phoneBackground, this.leftPos, this.topPos,
+                0, 0, this.imageWidth, this.imageHeight,
+                this.imageWidth, this.imageHeight);
 
-        //初次渲染手机后，leftPos和topPos才会有值，所以再设置一次手机左上角坐标
-        this.phonePosX = this.leftPos + this.imageWidth / 2 - this.phoneWidth / 2;
+        // 计算居中和左侧位置
+        centerPhoneX = this.leftPos + this.imageWidth / 2 - this.phoneWidth / 2;
+        leftPhoneX   = this.leftPos;
+        int rightPanelX = this.leftPos + this.phoneWidth + 3;
 
-        //渲染手机
-        switch (screenID) {
-            case screenType.HOME:
-                guiGraphics.blit(phoneScreenMain, this.phonePosX, this.topPos, 0, 0, this.phoneWidth, this.phoneHeight, this.phoneWidth, this.phoneHeight);
-                break;
-            case screenType.CHAT, screenType.Recorder:
-                guiGraphics.blit(phoneScreenMain, this.leftPos, this.topPos, 0, 0, this.phoneWidth, this.phoneHeight, this.phoneWidth, this.phoneHeight);
-                guiGraphics.blit(phoneScreenFrame, this.leftPos + this.phoneWidth + 3, this.topPos, 0, 0, this.imageWidth - this.phoneWidth - 3, this.phoneHeight, this.imageWidth - this.phoneWidth - 3, this.phoneHeight);
-                break;
+        if (transitioning && targetScreenID != -1) {
+            float progress = (float) transitionTicks / (float) transitionDuration;
+            if (progress > 1f) progress = 1f;
+
+            int phoneX;
+            if (slideToApp) {
+                phoneX = (int) (centerPhoneX + (leftPhoneX - centerPhoneX) * progress);
+            } else {
+                phoneX = (int) (leftPhoneX + (centerPhoneX - leftPhoneX) * progress);
+            }
+
+            // 动画过程中只绘制手机，不绘制右侧面板
+            g.blit(phoneScreenMain, phoneX, this.topPos, 0, 0,
+                    this.phoneWidth, this.phoneHeight,
+                    this.phoneWidth, this.phoneHeight);
+
+            transitionTicks++;
+            if (transitionTicks >= transitionDuration) {
+                transitioning = false;
+                currentScreenID = targetScreenID;
+                targetScreenID = -1;
+                pendingApplyScreen = true; // 动画完成后再应用控件可见性
+                this.home.visible = true;
+            }
+
+        } else {
+            // 非过渡状态
+            if (currentScreenID == screenType.HOME) {
+                g.blit(phoneScreenMain, centerPhoneX, this.topPos, 0, 0,
+                        this.phoneWidth, this.phoneHeight,
+                        this.phoneWidth, this.phoneHeight);
+            } else {
+                g.blit(phoneScreenMain, leftPhoneX, this.topPos, 0, 0,
+                        this.phoneWidth, this.phoneHeight,
+                        this.phoneWidth, this.phoneHeight);
+                g.blit(phoneScreenFrame, rightPanelX, this.topPos, 0, 0,
+                        this.imageWidth - this.phoneWidth - 3, this.phoneHeight,
+                        this.imageWidth - this.phoneWidth - 3, this.phoneHeight);
+            }
         }
 
-
-        //禁用混合模式
         RenderSystem.disableBlend();
-        this.chatPlayerList.getSelectedEntry().ifPresent(entry -> {
-            String tip = "当前选中：" + entry.getPlayerName();
-            guiGraphics.drawString(
-                    this.font,
-                    Component.literal(tip),
-                    10, 10, // 提示文本坐标
-                    0xFFFFFF // 文本颜色
-            );
-        });
-        String tip = "服务器返回：" + this.test;
-        guiGraphics.drawString(
-                this.font,
-                Component.literal(tip),
-                100, 10, // 提示文本坐标
-                0xFFFFFF // 文本颜色
-        );
-    }
 
-    protected void renderScreen(GuiGraphics guiGraphics) {
-        if (screenID == screenType.HOME) {
-            guiGraphics.blit(phoneScreenMain, this.leftPos + 110, this.topPos + 5, 0, 0, 200, 160, 200, 160);
-            // 禁用混合模式
+        // 动画完成后再应用控件可见性
+        if (pendingApplyScreen) {
+            pendingApplyScreen = false;
+            this.screenID = currentScreenID;
+            this.screenComponentManager(this.screenID);
         }
     }
+
+
 
     // 渲染标签
     @Override
@@ -442,6 +469,25 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         return false;
     }
 
+    // 启动滑动过渡
+    private void startTransition(int target) {
+        slideToApp = (currentScreenID == screenType.HOME && target != screenType.HOME);
+
+        this.targetScreenID = target;
+        this.transitioning = true;
+        this.transitionTicks = 0;
+        this.pendingApplyScreen = false;
+
+        // 动画过程中隐藏所有控件，避免提前出现
+        this.chatPlayerList.visible = false;
+        this.messageInputBox.visible = false;
+        this.sendMessageButton.visible = false;
+        this.recorderButton.visible = false;
+        this.chatApp.visible = false;
+        this.recorderApp.visible = false;
+        this.vscodeApp.visible = false;
+        this.home.visible = false;
+    }
 
 
 }
