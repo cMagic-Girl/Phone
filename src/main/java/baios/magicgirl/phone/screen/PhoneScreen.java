@@ -1,6 +1,6 @@
 package baios.magicgirl.phone.screen;
 
-import baios.magicgirl.phone.data.MyData;
+import baios.magicgirl.phone.data.ChatMessage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -23,7 +23,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     private final Level world;
     private final Player entity;
     private final String phoneName;
+    private final String phoneOwer;
     private int phoneHeight, phoneWidth, phonePosX;
+    public String test="test";
 
     private boolean menuStateUpdateActive = false;
 
@@ -58,6 +60,8 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     // GUI状态
     private String chatTarget = "default";
 
+    private List<String> playerList=List.of( "ema_phone", "hiro_phone", "koko_phone", "sherii_phone", "hanna_phone", "anan_phone", "noa_phone", "reia_phone", "miria_phone", "nanoka_phone", "maago_phone", "arisa_phone", "meruru_phone");
+
     // 玩家信息映射
     protected Map<String, String> playerMap = Map.ofEntries(
             Map.entry("ema_phone", "ema"),
@@ -75,6 +79,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             Map.entry("meruru_phone", "meruru")
     );
 
+    // 头像映射
     protected Map<String, ResourceLocation> avatarMap = Map.ofEntries(
             Map.entry("ema_phone", emaAvatar),
             Map.entry("hiro_phone", hiroAvatar),
@@ -113,6 +118,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
         // 获取手机名称
         this.phoneName = Objects.requireNonNullElse(container.phoneName, "phone");
+        this.phoneOwer = playerMap.get(phoneName);
 
         // 设置GUI的宽高
         this.imageWidth = 360;
@@ -159,12 +165,11 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.sendMessageButton = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.send_button"), e -> {
             String msg = messageInputBox.getValue();
 
-            int age = 18;
-            MyData payload = new MyData(msg, age);
-            entity.sendSystemMessage(Component.literal(playerMap.get(phoneName) +"向"+this.chatTarget+"发送消息了:"+ msg));
+            ChatMessage payload = new ChatMessage(chatTarget, this.phoneOwer, msg,(int)this.world.getDayTime());
+            //entity.sendSystemMessage(Component.literal(playerMap.get(phoneName) +"向"+this.chatTarget+"发送消息了:"+ msg));
             messageInputBox.setValue("");
             // 2. 通过PacketDistributor发送到服务端
-            //PacketDistributor.sendToServer(payload);
+            PacketDistributor.sendToServer(payload);
 
         }).bounds(this.leftPos + 300, this.topPos + 173, 30, 18).build();
         this.addRenderableWidget(sendMessageButton);
@@ -195,11 +200,12 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.chatPlayerList.setX(this.leftPos + 4);
         this.chatPlayerList.setY(this.topPos + 15);
 
-        for (String phoneName : playerMap.keySet()) {
+        for (String phoneName : playerList) {
             if (Objects.equals(phoneName, this.phoneName)) {
                 continue;
             }
             String playerName = playerMap.get(phoneName);
+            System.out.println("添加玩家：" + playerName);
             this.chatPlayerList.addPlayerEntry(avatarMap.get(phoneName), playerName, () -> this.onPlayerSelected(this.chatPlayerList.getSelectedEntry().orElse(null)));
         }
 
@@ -212,7 +218,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     }
 
-    // ========== 核心：Screen处理选中逻辑（业务代码写在这里） ==========
+    //聊天对象处理选中逻辑
     private void onPlayerSelected(ChatPlayerEntry selectedEntry) {
         if (selectedEntry == null) {
             this.chatTarget = "default";
@@ -226,8 +232,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.chatTarget = selectedEntry.getPlayerName();
     }
 
+    // 切换屏幕
     protected void screenComponentManager(int screenID) {
-        // 切换屏幕
+
         switch (screenID) {
             case screenType.HOME:
                 this.screenID = screenType.HOME;
@@ -324,6 +331,13 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                     0xFFFFFF // 文本颜色
             );
         });
+        String tip = "服务器返回：" + this.test;
+        guiGraphics.drawString(
+                this.font,
+                Component.literal(tip),
+                100, 10, // 提示文本坐标
+                0xFFFFFF // 文本颜色
+        );
     }
 
     protected void renderScreen(GuiGraphics guiGraphics) {
@@ -336,7 +350,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     // 渲染标签
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // 空实现，这样就不会渲染默认的'物品栏'标签和容器标题
+
         long dayTime = world.getDayTime();
         int hour = (int) (dayTime % 24000 / 1000) + 6;
         if (hour >= 24) {
@@ -375,7 +389,10 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     public boolean keyPressed(int key, int b, int c) {
         if (key == 256) {
             this.minecraft.player.closeContainer();
-            return true;
+            return true;        }
+        System.out.println("key: " + key);
+        if (key == 257 && screenID==screenType.CHAT&& !Objects.equals(this.chatTarget, "default")) {
+            this.sendMessageButton.onPress();
         }
         //文本输入框
         if (messageInputBox.isFocused())

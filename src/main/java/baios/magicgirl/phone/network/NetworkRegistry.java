@@ -2,7 +2,7 @@ package baios.magicgirl.phone.network;
 
 
 import baios.magicgirl.phone.MagicGirlPhone;
-import baios.magicgirl.phone.data.MyData;
+import baios.magicgirl.phone.data.ChatMessage;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -18,18 +18,18 @@ public class NetworkRegistry {
         // 1. 创建PayloadRegistrar，指定网络协议版本（如"1"）
         PayloadRegistrar registrar = event.registrar("1");
 
-        // 2. （可选）指定处理器执行线程：MAIN（主线程）或NETWORK（网络线程）
         // 若需在网络线程处理（避免阻塞主线程），需显式设置：
         registrar = registrar.executesOn(HandlerThread.NETWORK);
 
         // 3. 注册Play阶段的双向Payload（客户端↔服务端）
         registrar.playBidirectional(
-                MyData.TYPE,                // Payload唯一标识
-                MyData.STREAM_CODEC,        // 编解码器
+                ChatMessage.TYPE,                // Payload唯一标识
+                ChatMessage.STREAM_CODEC,        // 编解码器
                 new DirectionalPayloadHandler<>(
                         ClientPayloadHandler::handleData,  // 客户端接收时的处理器
                         ServerPayloadHandler::handleData   // 服务端接收时的处理器
                 )
         );
+
     }
 }
