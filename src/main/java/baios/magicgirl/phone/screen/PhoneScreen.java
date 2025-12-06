@@ -471,7 +471,13 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     // 启动滑动过渡
     private void startTransition(int target) {
-        slideToApp = (currentScreenID == screenType.HOME && target != screenType.HOME);
+
+        // 当前屏幕和目标屏幕相同时，不启动过渡(防止无意义动画)
+        if (currentScreenID == screenType.HOME && target == screenType.HOME) {
+            return;
+        }
+
+        slideToApp = (currentScreenID == screenType.HOME);
 
         this.targetScreenID = target;
         this.transitioning = true;
