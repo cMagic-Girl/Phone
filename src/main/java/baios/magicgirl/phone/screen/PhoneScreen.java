@@ -52,7 +52,8 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         int HOME = 0;
         int CHAT = 1;
         int Recorder = 2;
-        int SETTING = 3;
+        int Vscode = 3;
+        int SETTING = 4;
     }
 
     private int screenID = screenType.HOME;
@@ -100,6 +101,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     private Button home;
     private Button chatApp;
     private Button recorderApp;
+    private Button vscodeApp;
     private Button sendMessageButton;
     private Button recorderButton;
     private EditBox messageInputBox;
@@ -143,7 +145,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         ResourceLocation icon = avatarMap.get(this.phoneName);
         this.home = new IconButton(
                 this.leftPos + (this.imageWidth / 2) - 12,
-                this.topPos + 160,
+                this.topPos + 167,
                 20, 20,
                 icon,
                 e -> this.screenComponentManager(screenType.HOME)
@@ -151,15 +153,35 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.addRenderableWidget(home);
 
         //App按钮
-        this.chatApp = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.chat_app"), e -> {
-            this.screenComponentManager(screenType.CHAT);
-        }).bounds(this.leftPos + 130, this.topPos + 30, 24, 24).build();
+        // Chat
+        ResourceLocation chatIcon = ResourceLocation.parse("magic_girl_phone:textures/gui/qq_icon.png");
+        this.chatApp = new IconButton(
+                this.leftPos + 137, this.topPos + 30,
+                25, 25,
+                chatIcon,
+                e -> this.screenComponentManager(screenType.CHAT)
+        );
         this.addRenderableWidget(chatApp);
 
-        this.recorderApp = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.recorder_app"), e -> {
-            this.screenComponentManager(screenType.Recorder);
-        }).bounds(this.leftPos + 160, this.topPos + 30, 24, 24).build();
+        // Recorder
+        ResourceLocation recorderIcon = ResourceLocation.parse("magic_girl_phone:textures/gui/recorder_icon.png");
+        this.recorderApp = new IconButton(
+                this.leftPos + 167, this.topPos + 30,
+                25, 25,
+                recorderIcon,
+                e -> this.screenComponentManager(screenType.Recorder)
+        );
         this.addRenderableWidget(recorderApp);
+
+        // vscode(先用recorder凑数)
+        ResourceLocation vscodeIcon = ResourceLocation.parse("magic_girl_phone:textures/gui/vscode_icon.png");
+        this.vscodeApp = new IconButton(
+                this.leftPos + 197, this.topPos + 30,
+                25, 25,
+                vscodeIcon,
+                e -> this.screenComponentManager(screenType.Vscode)
+        );
+        this.addRenderableWidget(vscodeApp);
 
         // App内的组件
         this.sendMessageButton = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.send_button"), e -> {
@@ -196,9 +218,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         });
         this.addWidget(this.messageInputBox);
 
-        this.chatPlayerList = new ChatPlayerList(this.minecraft, 111, 154, 0, 34);
-        this.chatPlayerList.setX(this.leftPos + 4);
-        this.chatPlayerList.setY(this.topPos + 15);
+        this.chatPlayerList = new ChatPlayerList(this.minecraft, 102, 130, 0, 34);
+        this.chatPlayerList.setX(this.leftPos + 8);
+        this.chatPlayerList.setY(this.topPos + 25);
 
         for (String phoneName : playerList) {
             if (Objects.equals(phoneName, this.phoneName)) {
@@ -241,6 +263,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.chatApp.visible = true;
                 this.recorderApp.visible = true;
+                this.vscodeApp.visible = true;
 
                 this.messageInputBox.visible = false;
                 this.chatPlayerList.visible = false;
@@ -258,6 +281,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.chatApp.visible = false;
                 this.recorderApp.visible = false;
+                this.vscodeApp.visible = false;
 
                 this.messageInputBox.visible = false;
                 this.chatPlayerList.visible = true;
@@ -265,7 +289,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.recorderButton.visible = false;
 
-                this.timeLabelX = 91;
+                this.timeLabelX = 80;
                 this.phoneNameLabelY = 4;
                 this.home.setPosition(this.leftPos + (this.phoneWidth / 2) - 12, this.topPos + 160);
                 break;
@@ -274,6 +298,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.chatApp.visible = false;
                 this.recorderApp.visible = false;
+                this.vscodeApp.visible = false;
 
                 this.messageInputBox.visible = false;
                 this.chatPlayerList.visible = false;
@@ -281,7 +306,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.recorderButton.visible = true;
 
-                this.timeLabelX = 91;
+                this.timeLabelX = 80;
                 this.phoneNameLabelY = 4;
                 this.home.setPosition(this.leftPos + (this.phoneWidth / 2) - 12, this.topPos + 160);
                 break;
