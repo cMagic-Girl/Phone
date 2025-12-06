@@ -1,25 +1,49 @@
 
-Installation information
-=======
+# 魔法少女手机 (Magic Girl Phone)
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+一个 Minecraft NeoForge 模组，为游戏添加手机和聊天功能。
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+### 前置条件
+- Minecraft 1.21.1
+- NeoForge 21.1.215 
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+## 使用说明
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+### 获取手机
+可以通过以下方式获取手机：
+
+- 创造模式物品栏（搜索 "Ema Phone" 或 "Hiro Phone"）
+
+## 开发指南
+
+### 项目结构
+```
+src/main/java/baios/magicgirl/phone/
+├── Config.java                  # 模组配置
+├── MagicGirlPhone.java          # 主模组类
+├── MagicGirlPhoneClient.java    # 客户端初始化
+├── data/
+│   └── ChatMessage.java         # 聊天消息数据结构
+├── item/
+│   ├── EmaPhone.java            # Ema Phone 物品
+│   ├── HiroPhone.java           # Hiro Phone 物品
+│   └── ModItems.java            # 物品注册
+├── menu/
+│   ├── ModMenus.java            # 菜单注册
+│   └── PhoneMenu.java           # 手机菜单逻辑
+├── network/
+│   ├── ClientPayloadHandler.java# 客户端网络处理
+│   ├── NetworkRegistry.java     # 网络通道注册
+│   └── ServerPayloadHandler.java# 服务器网络处理
+├── screen/
+│   ├── ChatHistoryList.java     # 聊天历史 UI 组件
+│   ├── ChatMessageEntry.java    # 聊天消息条目 UI
+│   ├── ChatPlayerEntry.java     # 玩家条目 UI
+│   ├── ChatPlayerList.java      # 玩家列表 UI 组件
+│   ├── IconButton.java          # 自定义图标按钮 UI
+│   ├── ModScreens.java          # 界面注册
+│   └── PhoneScreen.java         # 主手机界面
+└── sound/
+    └── SoundRecorder.java       # 录音功能
+```
