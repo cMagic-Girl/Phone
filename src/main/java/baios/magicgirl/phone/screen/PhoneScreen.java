@@ -30,6 +30,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     // 资源
     private static final ResourceLocation phoneBackground = ResourceLocation.parse("magic_girl_phone:textures/gui/background.png");
     private static final ResourceLocation phoneScreenMain = ResourceLocation.parse("magic_girl_phone:textures/gui/phone_screen.png");
+    private static final ResourceLocation phoneScreenFrame = ResourceLocation.parse("magic_girl_phone:textures/gui/phone_frame.png");
     private static final ResourceLocation emaAvatar = ResourceLocation.parse("magic_girl_phone:textures/gui/player/ema.png");
     private static final ResourceLocation hiroAvatar = ResourceLocation.parse("magic_girl_phone:textures/gui/player/hiro.png");
     private static final ResourceLocation kokoAvatar = ResourceLocation.parse("magic_girl_phone:textures/gui/player/koko.png");
@@ -100,8 +101,8 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     private ChatPlayerList chatPlayerList;
 
     // 以下是组件定位
-    private int timeLabelX = 212;
-    private int phoneNameLabelY = 124;
+    private int timeLabelX = 180;
+    private int phoneNameLabelY = 120;
 
 
     // 构造
@@ -132,9 +133,15 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         super.init();
 
         // Home按钮
-        this.home = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.home"), e -> {
-            this.screenComponentManager(screenType.HOME);
-        }).bounds(this.leftPos + (this.imageWidth / 2) - 12, this.topPos + 175, 24, 24).build();
+        // 根据玩家选择不同图标
+        ResourceLocation icon = avatarMap.get(this.phoneName);
+        this.home = new IconButton(
+                this.leftPos + (this.imageWidth / 2) - 12,
+                this.topPos + 160,
+                20, 20,
+                icon,
+                e -> this.screenComponentManager(screenType.HOME)
+        );
         this.addRenderableWidget(home);
 
         //App按钮
@@ -234,9 +241,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.recorderButton.visible = false;
 
-                this.timeLabelX = 211;
-                this.phoneNameLabelY = 124;
-                this.home.setPosition(this.leftPos + (this.imageWidth / 2) - 12, this.topPos + 173);
+                this.timeLabelX = 200;
+                this.phoneNameLabelY = 110;
+                this.home.setPosition(this.leftPos + (this.imageWidth / 2) - 12, this.topPos + 160);
 
                 break;
             case screenType.CHAT:
@@ -253,7 +260,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.timeLabelX = 91;
                 this.phoneNameLabelY = 4;
-                this.home.setPosition(this.leftPos + (this.phoneWidth / 2) - 12, this.topPos + 173);
+                this.home.setPosition(this.leftPos + (this.phoneWidth / 2) - 12, this.topPos + 160);
                 break;
             case screenType.Recorder:
                 this.screenID = screenType.Recorder;
@@ -269,7 +276,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.timeLabelX = 91;
                 this.phoneNameLabelY = 4;
-                this.home.setPosition(this.leftPos + (this.phoneWidth / 2) - 12, this.topPos + 173);
+                this.home.setPosition(this.leftPos + (this.phoneWidth / 2) - 12, this.topPos + 160);
                 break;
         }
     }
@@ -298,12 +305,10 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         switch (screenID) {
             case screenType.HOME:
                 guiGraphics.blit(phoneScreenMain, this.phonePosX, this.topPos, 0, 0, this.phoneWidth, this.phoneHeight, this.phoneWidth, this.phoneHeight);
-                guiGraphics.blit(phoneScreenMain, this.phonePosX + 3, this.topPos + 3, 0, 0, this.phoneWidth - 6, this.phoneHeight - 30, this.phoneWidth - 6, this.phoneHeight - 30);
                 break;
             case screenType.CHAT, screenType.Recorder:
                 guiGraphics.blit(phoneScreenMain, this.leftPos, this.topPos, 0, 0, this.phoneWidth, this.phoneHeight, this.phoneWidth, this.phoneHeight);
-                guiGraphics.blit(phoneScreenMain, this.leftPos + 3, this.topPos + 3, 0, 0, this.phoneWidth - 6, this.phoneHeight - 30, this.phoneWidth - 6, this.phoneHeight - 30);
-                guiGraphics.blit(phoneScreenMain, this.leftPos + this.phoneWidth + 3, this.topPos, 0, 0, this.imageWidth - this.phoneWidth - 3, this.phoneHeight, this.imageWidth - this.phoneWidth - 3, this.phoneHeight);
+                guiGraphics.blit(phoneScreenFrame, this.leftPos + this.phoneWidth + 3, this.topPos, 0, 0, this.imageWidth - this.phoneWidth - 3, this.phoneHeight, this.imageWidth - this.phoneWidth - 3, this.phoneHeight);
                 break;
         }
 
@@ -340,8 +345,8 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         int minute = (int) (dayTime % 1000 / 20);
         String time = String.format("%02d:%02d", hour, minute);
 
-        guiGraphics.drawString(this.font, Component.literal(time), this.timeLabelX, 6, -12829636, false);
-        guiGraphics.drawString(this.font, Component.literal(this.phoneName), this.phoneNameLabelY, 6, -12829636, false);
+        guiGraphics.drawString(this.font, Component.literal(time), this.timeLabelX, 15, -12829636, false);
+        //guiGraphics.drawString(this.font, Component.literal(this.phoneName), this.phoneNameLabelY, 15, -12829636, false);
 
     }
 
@@ -394,6 +399,8 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         // 返回false表示这不是暂停界面（类似背包）
         return false;
     }
+
+
 
 }
 
