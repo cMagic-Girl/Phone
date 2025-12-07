@@ -1,15 +1,14 @@
 package baios.magicgirl.phone.network;
 
-import baios.magicgirl.phone.data.ChatMessage;
+import baios.magicgirl.phone.data.ChatMessageData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class ServerPayloadHandler {
     // 服务端接收Payload时的处理方法
-    public static void handleData(final ChatMessage data, final IPayloadContext context) {
+    public static void handleData(final ChatMessageData data, final IPayloadContext context) {
         // 1. 网络线程中执行轻量级计算（避免阻塞主线程）
         String chatTarget = data.chatTarget();
         String chatOrigin = data.chatOrigin();
@@ -23,7 +22,7 @@ public class ServerPayloadHandler {
                     // 主线程中执行的逻辑（如给玩家发送消息、修改玩家数据）
                     // player.sendSystemMessage(Component.literal("给" + chatTarget + "发送："+ message));
 
-                    ChatMessage payload = new ChatMessage("服务器"+chatTarget, chatOrigin, message,dayTimes);
+                    ChatMessageData payload = new ChatMessageData("服务器"+chatTarget, chatOrigin, message,dayTimes);
 
                     PacketDistributor.sendToAllPlayers(payload);
 
