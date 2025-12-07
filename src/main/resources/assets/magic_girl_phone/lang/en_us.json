@@ -4,6 +4,18 @@
 
   "gui.magic_girl_phone.ema":"Ema",
   "gui.magic_girl_phone.hiro":"Hiro",
+  "gui.magic_girl_phone.koko": "Koko",
+  "gui.magic_girl_phone.sherii": "Sherii",
+  "gui.magic_girl_phone.hanna": "Hanna",
+  "gui.magic_girl_phone.anan": "Anan",
+  "gui.magic_girl_phone.noa": "Noa",
+  "gui.magic_girl_phone.reia": "Reia",
+  "gui.magic_girl_phone.miria": "Miria",
+  "gui.magic_girl_phone.nanoka": "Nanoka",
+  "gui.magic_girl_phone.maago": "Maago",
+  "gui.magic_girl_phone.arisa": "Arisa",
+  "gui.magic_girl_phone.meruru": "Meruru",
+
   "gui.magic_girl_phone.ema_phone": "Ema Phone",
   "gui.magic_girl_phone.phone_screen.message": "message",
   "gui.magic_girl_phone.phone_screen.player_list": "Player List",
