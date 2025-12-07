@@ -1,11 +1,14 @@
 package baios.magicgirl.phone.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -14,10 +17,16 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ChatPlayerEntry extends ContainerObjectSelectionList.Entry<ChatPlayerEntry> {
-    private final ResourceLocation playerAvatar;
-    private final String playerName;
 
-    // 视觉状态
+    private final Font font = Minecraft.getInstance().font;
+    private final ResourceLocation playerAvatar;
+
+    private final String playerName;
+    private String lastMessage = "这是一条测试消息";
+    private int unreadCount = 1;
+
+    // 状态
+    private boolean isUnread;
     private boolean isHovered;
     private boolean isSelected = false;
 
@@ -26,16 +35,19 @@ public class ChatPlayerEntry extends ContainerObjectSelectionList.Entry<ChatPlay
     public ChatPlayerEntry(ResourceLocation playerAvatar, String name, Consumer<ChatPlayerEntry> onClickCallback) {
         super();
         this.playerAvatar = playerAvatar;
-        this.playerName = name;
+        this.playerName = I18n.get("gui.magic_girl_phone." + name);
         this.onClickCallback = onClickCallback;
     }
+
 
     @Override
     public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovered, float partialTick) {
         this.isHovered = hovered;
         renderBackground(guiGraphics, left, top, width, height);
         RenderSystem.enableBlend(); // 透明头像适配
-        guiGraphics.blit(this.playerAvatar, left + 55, top + 1, 0, 0, 28, 28, 28, 28);
+        guiGraphics.drawString(this.font, playerName, left + 87, top + 3, 0xFFFFFF);
+        guiGraphics.drawString(this.font, lastMessage, left + 87, top + 15, 0x808080);
+        guiGraphics.blit(this.playerAvatar, left + 58, top + 1, 0, 0, 28, 28, 28, 28);
         RenderSystem.disableBlend();
     }
 

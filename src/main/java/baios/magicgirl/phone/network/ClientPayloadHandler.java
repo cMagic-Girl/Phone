@@ -1,14 +1,12 @@
 package baios.magicgirl.phone.network;
 
-import baios.magicgirl.phone.data.ChatMessage;
+import baios.magicgirl.phone.data.ChatMessageData;
 import baios.magicgirl.phone.item.ModItems;
 import baios.magicgirl.phone.screen.PhoneScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +14,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class ClientPayloadHandler {
     // 方法签名必须匹配：MyData + IPayloadContext，静态方法，void返回值
-    public static void handleData(ChatMessage data, IPayloadContext context) {
+    public static void handleData(ChatMessageData data, IPayloadContext context) {
         // 客户端处理逻辑
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer localPlayer = minecraft.player;

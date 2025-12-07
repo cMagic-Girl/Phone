@@ -7,23 +7,23 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 // 自定义数据载体（以MyData为例，包含name和age）
-public record ChatMessage(String chatTarget,String chatOrigin, String message, int dayTimes) implements CustomPacketPayload {
+public record ChatMessageData(String chatTarget, String chatOrigin, String message, int dayTimes) implements CustomPacketPayload {
     // 1. 定义Payload的唯一标识（命名空间+路径，避免冲突）
-    public static final CustomPacketPayload.Type<ChatMessage> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath( "magic_girl_phone", "chat_message"));
+    public static final CustomPacketPayload.Type<ChatMessageData> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath( "magic_girl_phone", "chat_message_data"));
 
     // 2. 定义编解码器：指定如何将数据写入/读取ByteBuf
-    public static final StreamCodec<RegistryFriendlyByteBuf, ChatMessage> STREAM_CODEC =
+    public static final StreamCodec<RegistryFriendlyByteBuf, ChatMessageData> STREAM_CODEC =
             StreamCodec.composite(
                     ByteBufCodecs.STRING_UTF8,      // name的编码方式（UTF8字符串）
-                    ChatMessage::chatTarget,
+                    ChatMessageData::chatTarget,
                     ByteBufCodecs.STRING_UTF8,
-                    ChatMessage::chatOrigin,
+                    ChatMessageData::chatOrigin,
                     ByteBufCodecs.STRING_UTF8,
-                    ChatMessage::message,
+                    ChatMessageData::message,
                     ByteBufCodecs.VAR_INT,
-                    ChatMessage::dayTimes,
-                    ChatMessage::new                 // 解码时通过name+age构造MyData实例
+                    ChatMessageData::dayTimes,
+                    ChatMessageData::new             // 解码时通过name+age构造MyData实例
             );
 
     // 3. 实现type()方法：返回唯一标识
