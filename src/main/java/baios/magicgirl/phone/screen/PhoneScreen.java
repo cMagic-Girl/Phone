@@ -123,6 +123,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     private Button recorderButton;
     private EditBox messageInputBox;
     private ChatPlayerList chatPlayerList;
+    private ChatHistoryList chatHistoryList;
 
     // 以下是组件定位
     private int timeLabelX = 180;
@@ -167,9 +168,8 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 icon,
                 e -> startTransition(screenType.HOME)
         );
-        this.addRenderableWidget(home);
 
-        //App按钮
+        // App按钮
         // Chat
         ResourceLocation chatIcon = ResourceLocation.parse("magic_girl_phone:textures/gui/qq_icon.png");
         this.chatApp = new IconButton(
@@ -178,7 +178,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 chatIcon,
                 e -> startTransition(screenType.CHAT)
         );
-        this.addRenderableWidget(chatApp);
+
 
         // Recorder
         ResourceLocation recorderIcon = ResourceLocation.parse("magic_girl_phone:textures/gui/recorder_icon.png");
@@ -188,7 +188,6 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 recorderIcon,
                 e -> startTransition(screenType.Recorder)
         );
-        this.addRenderableWidget(recorderApp);
 
         // vscode(先用recorder凑数)
         ResourceLocation vscodeIcon = ResourceLocation.parse("magic_girl_phone:textures/gui/vscode_icon.png");
@@ -198,7 +197,6 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 vscodeIcon,
                 e -> startTransition(screenType.Vscode)
         );
-        this.addRenderableWidget(vscodeApp);
 
         // App内的组件
         this.sendMessageButton = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.send_button"), e -> {
@@ -210,22 +208,16 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 // 2. 通过PacketDistributor发送到服务端
                 PacketDistributor.sendToServer(payload);
             }
-
-        }).bounds(this.leftPos + 300, this.topPos + 173, 30, 18).build();
-        this.addRenderableWidget(sendMessageButton);
+        }).bounds(this.leftPos + 320, this.topPos + 173, 30, 18).build();
 
         this.recorderButton = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.recorder_start"), e -> {
-
-
         }).bounds(this.leftPos + 210, this.topPos + 100, 60, 36).build();
-        this.addRenderableWidget(recorderButton);
-
 
         this.messageInputBox = new EditBox(
                 this.font, // 字体
                 this.leftPos + 130, // X坐标（相对于GUI左侧偏移）
                 this.topPos + 173, // Y坐标（相对于GUI顶部偏移）
-                165, // 宽度
+                185, // 宽度
                 18, // 高度
                 Component.translatable("gui.magic_girl_phone.phone_screen.message")// 提示文本
         );
@@ -234,8 +226,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             //if (!menuStateUpdateActive)
             //menu.sendMenuStateUpdate(entity, 0, "message", content, false);
         });
-        this.addWidget(this.messageInputBox);
 
+
+        // 聊天列表
         this.chatPlayerList = new ChatPlayerList(this.minecraft, 102, 130, 0, 34);
         this.chatPlayerList.setX(this.leftPos + 8);
         this.chatPlayerList.setY(this.topPos + 25);
@@ -249,9 +242,25 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             this.chatPlayerList.addPlayerEntry(avatarMap.get(phoneName), playerName, () -> this.onPlayerSelected(this.chatPlayerList.getSelectedEntry().orElse(null)));
         }
 
+        //
+        this.chatHistoryList = new ChatHistoryList(this.minecraft, 220, 150, 0, 34);
+        this.chatHistoryList.setX(this.leftPos + 130);
+        this.chatHistoryList.setY(this.topPos + 10);
+        this.chatHistoryList.addMessageEntry(avatarMap.get(phoneName), playerMap.get(phoneName),"你好！");
+        this.chatHistoryList.addMessageEntry(avatarMap.get(phoneName), playerMap.get(phoneName),"我不好！");
 
-        // 添加列表到屏幕
+        // 添加组件到屏幕
+        this.addRenderableWidget(home);
+        this.addRenderableWidget(chatApp);
+        this.addRenderableWidget(recorderApp);
+        this.addRenderableWidget(vscodeApp);
+        this.addRenderableWidget(sendMessageButton);
+        this.addRenderableWidget(recorderButton);
+        this.addWidget(this.messageInputBox);
         this.addWidget(this.chatPlayerList);
+        this.addWidget(this.chatHistoryList);
+
+
 
         // 初始化时显示
         this.screenComponentManager(screenID);
@@ -262,11 +271,13 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     private void onPlayerSelected(ChatPlayerEntry selectedEntry) {
         if (selectedEntry == null) {
             this.chatTarget = "default";
+            this.chatHistoryList.visible = false;
             this.messageInputBox.visible = false;
             this.sendMessageButton.visible = false;
             System.out.println("未选中任何玩家");
             return;
         }
+        this.chatHistoryList.visible = true;
         this.messageInputBox.visible = true;
         this.sendMessageButton.visible = true;
         this.chatTarget = selectedEntry.getPlayerName();
@@ -285,6 +296,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.messageInputBox.visible = false;
                 this.chatPlayerList.visible = false;
+                this.chatHistoryList.visible = false;
                 this.sendMessageButton.visible = false;
 
                 this.recorderButton.visible = false;
@@ -302,6 +314,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.messageInputBox.visible = false;
                 this.chatPlayerList.visible = true;
+                this.chatHistoryList.visible = false;
                 this.sendMessageButton.visible = false;
 
                 this.recorderButton.visible = false;
@@ -318,6 +331,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.messageInputBox.visible = false;
                 this.chatPlayerList.visible = false;
+                this.chatHistoryList.visible = false;
                 this.sendMessageButton.visible = false;
 
                 this.recorderButton.visible = true;
@@ -414,7 +428,6 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         String time = String.format("%02d:%02d", hour, minute);
 
         guiGraphics.drawString(this.font, Component.literal(time), this.timeLabelX, 15, -12829636, false);
-        //guiGraphics.drawString(this.font, Component.literal(this.phoneName), this.phoneNameLabelY, 15, -12829636, false);
         if (currentScreenID == screenType.CHAT && Objects.equals(chatTarget, "default")) {
             guiGraphics.drawString(
                     this.font,
@@ -433,6 +446,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         messageInputBox.render(guiGraphics, mouseX, mouseY, partialTicks);
         chatPlayerList.render(guiGraphics, mouseX, mouseY, partialTicks);
+        chatHistoryList.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
