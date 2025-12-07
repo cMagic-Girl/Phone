@@ -37,6 +37,8 @@
   "gui.magic_girl_phone.phone_screen.recorder_app": "录音",
   "gui.magic_girl_phone.phone_screen.recorder_start":"开始录音",
 
+  "creative_tab.magic_girl_phone.phone_tab": "魔法少女启示录 小手机",
+
   "magic_girl_phone.configuration.title": "Magic Girl Phone Configs",
   "magic_girl_phone.configuration.section.magic_girl_phone.common.toml": "Magic Girl Phone Configs",
   "magic_girl_phone.configuration.section.magic_girl_phone.common.toml.title": "Magic Girl Phone Configs",
