@@ -2,11 +2,6 @@ package baios.magicgirl.phone;
 
 import baios.magicgirl.phone.item.ModItems;
 import baios.magicgirl.phone.menu.ModMenus;
-import baios.magicgirl.phone.menu.PhoneMenu;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.inventory.MenuType;
-import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -24,8 +19,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-import java.util.function.Supplier;
-
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(MagicGirlPhone.MODID)
 public class MagicGirlPhone {
@@ -40,8 +33,10 @@ public class MagicGirlPhone {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
-        ModItems.Registries.register(modEventBus);
 
+
+        ModItems.REGISTRY.register(modEventBus);
+        ModCreativeTabs.REGISTRY.register(modEventBus);
         ModMenus.REGISTRY.register(modEventBus);
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (MagicGirlPhone) to respond directly to events.
@@ -72,7 +67,7 @@ public class MagicGirlPhone {
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+        if (event.getTabKey() == ModCreativeTabs.PHONE_TAB.getKey()) {
             event.accept(ModItems.EMA_PHONE);
             event.accept(ModItems.HIRO_PHONE);
             event.accept(ModItems.KOKO_PHONE);

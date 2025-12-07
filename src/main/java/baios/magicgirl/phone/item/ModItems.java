@@ -6,7 +6,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ModItems {
-    public static final DeferredRegister.Items Registries =
+    public static final DeferredRegister.Items REGISTRY =
             DeferredRegister.createItems(MagicGirlPhone.MODID);
 
     public static final DeferredItem<Item> EMA_PHONE;
