@@ -12,16 +12,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class HiroPhone extends Item {
-
-
-    public HiroPhone() {
-        super(new Properties().stacksTo(1));
+public class PhoneItem extends Item {
+    public String phoneName;
+    public PhoneItem(String phoneName) {
+        super(new Item.Properties().stacksTo(1));
+        this.phoneName = phoneName;
     }
-
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack itemStack = player.getItemInHand(hand);
+
         // 仅在服务端执行逻辑（避免客户端重复触发）
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
 
@@ -30,7 +29,7 @@ public class HiroPhone extends Item {
                             (containerId, playerInventory, player1) -> new PhoneMenu(containerId, playerInventory, null),
                             Component.translatable("menu.title.examplemod.mymenu")
                     ),
-                    (RegistryFriendlyByteBuf buf) -> buf.writeUtf("hiro_phone")
+                    (RegistryFriendlyByteBuf buf) -> buf.writeUtf(this.phoneName)
             );
         }
 
