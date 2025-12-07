@@ -24,19 +24,19 @@ public class ModItems {
     public static final DeferredItem<Item> MERURU_PHONE;
 
     static {
-        EMA_PHONE = Registries.register("ema_phone",()->new PhoneItem("ema_phone"));
-        HIRO_PHONE = Registries.register("hiro_phone",()->new PhoneItem("hiro_phone"));
-        KOKO_PHONE = Registries.register("koko_phone",()->new PhoneItem("koko_phone"));
-        SHERII_PHONE = Registries.register("sherii_phone",()->new PhoneItem("sherii_phone"));
-        HANNA_PHONE = Registries.register("hanna_phone",()->new PhoneItem("hanna_phone"));
-        ANAN_PHONE = Registries.register("anan_phone",()->new PhoneItem("anan_phone"));
-        NOA_PHONE = Registries.register("noa_phone",()->new PhoneItem("noa_phone"));
-        REIA_PHONE = Registries.register("reia_phone",()->new PhoneItem("reia_phone"));
-        MIRIA_PHONE = Registries.register("miria_phone",()->new PhoneItem("miria_phone"));
-        NANOKA_PHONE = Registries.register("nanoka_phone",()->new PhoneItem("nanoka_phone"));
-        MAAGO_PHONE = Registries.register("maago_phone",()->new PhoneItem("maago_phone"));
-        ARISA_PHONE = Registries.register("arisa_phone",()->new PhoneItem("arisa_phone"));
-        MERURU_PHONE = Registries.register("meruru_phone",()->new PhoneItem("meruru_phone"));
+        EMA_PHONE = REGISTRY.register("ema_phone",()->new PhoneItem("ema_phone"));
+        HIRO_PHONE = REGISTRY.register("hiro_phone",()->new PhoneItem("hiro_phone"));
+        KOKO_PHONE = REGISTRY.register("koko_phone",()->new PhoneItem("koko_phone"));
+        SHERII_PHONE = REGISTRY.register("sherii_phone",()->new PhoneItem("sherii_phone"));
+        HANNA_PHONE = REGISTRY.register("hanna_phone",()->new PhoneItem("hanna_phone"));
+        ANAN_PHONE = REGISTRY.register("anan_phone",()->new PhoneItem("anan_phone"));
+        NOA_PHONE = REGISTRY.register("noa_phone",()->new PhoneItem("noa_phone"));
+        REIA_PHONE = REGISTRY.register("reia_phone",()->new PhoneItem("reia_phone"));
+        MIRIA_PHONE = REGISTRY.register("miria_phone",()->new PhoneItem("miria_phone"));
+        NANOKA_PHONE = REGISTRY.register("nanoka_phone",()->new PhoneItem("nanoka_phone"));
+        MAAGO_PHONE = REGISTRY.register("maago_phone",()->new PhoneItem("maago_phone"));
+        ARISA_PHONE = REGISTRY.register("arisa_phone",()->new PhoneItem("arisa_phone"));
+        MERURU_PHONE = REGISTRY.register("meruru_phone",()->new PhoneItem("meruru_phone"));
     }
 
 }
