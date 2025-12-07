@@ -1,6 +1,17 @@
 {
   "item.magic_girl_phone.ema_phone": "Ema Phone",
   "item.magic_girl_phone.hiro_phone": "Hiro Phone",
+  "item.magic_girl_phone.koko_phone": "Koko Phone",
+  "item.magic_girl_phone.sherii_phone": "Sherii Phone",
+  "item.magic_girl_phone.hanna_phone": "Hanna Phone",
+  "item.magic_girl_phone.anan_phone": "Anan Phone",
+  "item.magic_girl_phone.noa_phone": "Noa Phone",
+  "item.magic_girl_phone.reia_phone": "Reia Phone",
+  "item.magic_girl_phone.miria_phone": "Miria Phone",
+  "item.magic_girl_phone.nanoka_phone": "Nanoka Phone",
+  "item.magic_girl_phone.maago_phone": "Maago Phone",
+  "item.magic_girl_phone.arisa_phone": "Arisa Phone",
+  "item.magic_girl_phone.meruru_phone": "Meruru Phone",
 
   "gui.magic_girl_phone.ema":"Ema",
   "gui.magic_girl_phone.hiro":"Hiro",

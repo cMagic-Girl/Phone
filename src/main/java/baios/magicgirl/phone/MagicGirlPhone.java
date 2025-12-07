@@ -75,6 +75,17 @@ public class MagicGirlPhone {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(ModItems.EMA_PHONE);
             event.accept(ModItems.HIRO_PHONE);
+            event.accept(ModItems.KOKO_PHONE);
+            event.accept(ModItems.SHERII_PHONE);
+            event.accept(ModItems.HANNA_PHONE);
+            event.accept(ModItems.ANAN_PHONE);
+            event.accept(ModItems.NOA_PHONE);
+            event.accept(ModItems.REIA_PHONE);
+            event.accept(ModItems.MIRIA_PHONE);
+            event.accept(ModItems.NANOKA_PHONE);
+            event.accept(ModItems.MAAGO_PHONE);
+            event.accept(ModItems.ARISA_PHONE);
+            event.accept(ModItems.MERURU_PHONE);
         }
     }
 
