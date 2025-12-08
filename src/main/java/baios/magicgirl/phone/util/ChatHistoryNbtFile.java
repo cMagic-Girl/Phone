@@ -7,6 +7,7 @@ import baios.magicgirl.phone.MagicGirlPhone;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.Tag;
 import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class ChatHistoryNbtFile {
         int start;
         CompoundTag chatHistoryList = new CompoundTag();
         if (chatHistoryNumber == 0) {
-            return null;
+            return new CompoundTag();
         }else if(chatHistoryNumber<5){
             start = 1;
         }else {
@@ -39,11 +40,26 @@ public class ChatHistoryNbtFile {
         CompoundTag chatHistory = getChatHistory(chatOrigin, chatTarget);
         int a = 1 ;
         for (int i = start ; i < chatHistoryNumber+1; i++) {
-            CompoundTag messageData = (CompoundTag) chatHistory.get(String.valueOf(i));
-            if (messageData != null) {
-                chatHistoryList.put(String.valueOf(a), messageData);
-                a++;
+            if (chatHistory != null) {
+                String targetKey = String.valueOf(i);
+
+                // 关键：检查键存在 + 类型是CompoundTag（TAG_COMPOUND对应数值10）
+                if (chatHistory.contains(targetKey, Tag.TAG_COMPOUND)) {
+                    // 安全获取嵌套的CompoundTag（无需强制转换）
+                    CompoundTag messageData = chatHistory.getCompound(targetKey);
+                    chatHistoryList.put(String.valueOf(a), messageData);
+                    a++;
+                    // 后续处理messageData
+                    // ...
+                } else {
+                    // 键不存在 或 类型不是CompoundTag的兜底逻辑
+                    System.err.println("错误：键" + targetKey + "不存在，或对应值不是CompoundTag");
+                }
+            } else {
+                // chatHistory本身不是CompoundTag的兜底逻辑
+                System.err.println("错误：chatHistory不是CompoundTag类型");
             }
+
         }
 
         return chatHistoryList;

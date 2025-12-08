@@ -43,6 +43,12 @@ public class NetworkRegistry {
         );
 
         registrar.playToClient(
+                ChatMessageCallBack.TYPE,
+                ChatMessageCallBack.STREAM_CODEC,
+                ClientPayloadHandler::handleChatMessageCallBack
+        );
+
+        registrar.playToClient(
                 ChatAppOpenData.TYPE,
                 ChatAppOpenData.STREAM_CODEC,
                 ClientPayloadHandler::handleChatAppOpenData

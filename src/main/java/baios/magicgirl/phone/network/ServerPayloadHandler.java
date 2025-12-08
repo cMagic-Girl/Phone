@@ -1,10 +1,8 @@
 package baios.magicgirl.phone.network;
 
-import baios.magicgirl.phone.data.ChatAppOpenData;
-import baios.magicgirl.phone.data.ChatAppOpenGet;
-import baios.magicgirl.phone.data.ChatHistoryGet;
-import baios.magicgirl.phone.data.ChatMessageData;
+import baios.magicgirl.phone.data.*;
 import baios.magicgirl.phone.util.ChatHistoryNbtFile;
+import baios.magicgirl.phone.util.NbtStringManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,10 +26,12 @@ public class ServerPayloadHandler {
         messageTag.putString("message", message);
         messageTag.putInt("dayTimes", dayTimes);
         ChatHistoryNbtFile.writeChatHistory(messageTag);
-
+        ServerPlayer player = (ServerPlayer) context.player();
+        ChatMessageCallBack chatMessageCallBack = new ChatMessageCallBack(true);
+        PacketDistributor.sendToPlayer(player, chatMessageCallBack);
         // 2. 若需操作游戏逻辑（如修改实体、世界），需切换到主线程
         context.enqueueWork(() -> {
-                    ServerPlayer player = (ServerPlayer) context.player();
+
                     // 主线程中执行的逻辑（如给玩家发送消息、修改玩家数据）
                     // player.sendSystemMessage(Component.literal("给" + chatTarget + "发送："+ message));
 
@@ -61,6 +61,8 @@ public class ServerPayloadHandler {
         String chatOrigin = data.chatOrigin();
         CompoundTag historyList = ChatHistoryNbtFile.readChatHistory(chatTarget, chatOrigin);
         System.out.println("historyList: " + historyList);
-
+        ChatHistoryData chatHistoryData = new ChatHistoryData(historyList);
+        ServerPlayer player = (ServerPlayer) iPayloadContext.player();
+        PacketDistributor.sendToPlayer(player ,chatHistoryData);
     }
 }

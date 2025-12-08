@@ -136,7 +136,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             Map.entry("meruru_phone", meruruAvatar)
     );
 
-    public Map<String,String> lastMessageMap = new HashMap<>();
+    public Map<String, String> lastMessageMap = new HashMap<>();
 
     // 以下为屏幕组件
     private Button home;
@@ -225,12 +225,14 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         // App内的组件
         this.sendMessageButton = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.send_button"), e -> {
             String msg = messageInputBox.getValue();
-            if(!msg.isEmpty()) {
+            if (!msg.isEmpty()) {
                 ChatMessageData payload = new ChatMessageData(phoneName, this.chatTargetPhone, msg, (int) this.world.getDayTime());
                 //entity.sendSystemMessage(Component.literal(playerMap.get(phoneName) +"向"+this.chatTarget+"发送消息了:"+ msg));
                 messageInputBox.setValue("");
                 // 2. 通过PacketDistributor发送到服务端
                 PacketDistributor.sendToServer(payload);
+
+
             }
         }).bounds(this.leftPos + 320, this.topPos + 173, 30, 18).build();
 
@@ -258,7 +260,6 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.chatPlayerList.setY(this.topPos + 25);
 
 
-
         //
         this.chatHistoryList = new ChatHistoryList(this.minecraft, 220, 150, 0, 34);
         this.chatHistoryList.setX(this.leftPos + 130);
@@ -276,12 +277,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.addWidget(this.chatPlayerList);
         this.addWidget(this.chatHistoryList);
 
-        CompoundTag rootTag = ChatHistoryNbtFile.fileToNBT("phone_data.nbt");;
-        System.out.println(rootTag);
-        System.out.println(rootTag.get("phone_data"));
-
-
-
+        //CompoundTag rootTag = ChatHistoryNbtFile.fileToNBT("phone_data.nbt");;
+        //System.out.println(rootTag);
+        //System.out.println(rootTag.get("phone_data"));
 
 
         // 初始化时显示
@@ -312,9 +310,17 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     }
 
-    public void chatHistoryAdd(String phoneName, String chatTarget, String chatMsg) {
-        boolean isMine = phoneName.equals(this.phoneName);
-        this.chatHistoryList.addMessageEntry(avatarMap.get(phoneName), playerMap.get(phoneName),chatMsg, isMine);
+    public void chatHistoryUpdate() {
+        this.chatHistoryList.clear();
+        ChatHistoryGet payload = new ChatHistoryGet(phoneName, chatTargetPhone);
+        PacketDistributor.sendToServer(payload);
+    }
+
+    public void chatHistoryAdd(String chatOrigin, String chatTarget, String chatMsg) {
+        boolean isMine = chatOrigin.equals(this.phoneName);
+        System.out.println("is Mine:"+isMine);
+        this.chatHistoryList.addMessageEntry(avatarMap.get(chatOrigin), playerMap.get(chatOrigin), chatMsg, isMine);
+
     }
 
     // 切换屏幕
@@ -381,7 +387,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         }
     }
 
-    public void setChatList(){
+    public void setChatList() {
         for (String phoneName : playerList) {
             if (Objects.equals(phoneName, this.phoneName)) {
                 continue;
@@ -389,7 +395,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             String playerName = playerMap.get(phoneName);
             String lastMessage = lastMessageMap.get(phoneName);
             //System.out.println("添加玩家：" + playerName);
-            this.chatPlayerList.addPlayerEntry(avatarMap.get(phoneName), playerName,lastMessage, () -> this.onPlayerSelected(this.chatPlayerList.getSelectedEntry().orElse(null)));
+            this.chatPlayerList.addPlayerEntry(avatarMap.get(phoneName), playerName, lastMessage, () -> this.onPlayerSelected(this.chatPlayerList.getSelectedEntry().orElse(null)));
         }
     }
 
