@@ -19,7 +19,7 @@ public class ModCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PHONE_TAB = REGISTRY.register("magic_girl_phone_tab", () ->
             CreativeModeTab.builder()
                     // 设置 Tab 图标
-                    .icon(() -> new ItemStack(ModItems.HIRO_PHONE.get()))
+                    .icon(() -> new ItemStack(ModItems.EMA_PHONE.get()))
                     // 设置 Tab 名称
                     .title(Component.translatable("creative_tab.magic_girl_phone.phone_tab"))
                     // 2.3 可选：调整 Tab 排序（比如放在「物品」Tab 之后）
