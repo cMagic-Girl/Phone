@@ -15,14 +15,10 @@ public record ChatMessageData(String chatTarget, String chatOrigin, String messa
     // 2. 定义编解码器：指定如何将数据写入/读取ByteBuf
     public static final StreamCodec<RegistryFriendlyByteBuf, ChatMessageData> STREAM_CODEC =
             StreamCodec.composite(
-                    ByteBufCodecs.STRING_UTF8,      // name的编码方式（UTF8字符串）
-                    ChatMessageData::chatTarget,
-                    ByteBufCodecs.STRING_UTF8,
-                    ChatMessageData::chatOrigin,
-                    ByteBufCodecs.STRING_UTF8,
-                    ChatMessageData::message,
-                    ByteBufCodecs.VAR_INT,
-                    ChatMessageData::dayTimes,
+                    ByteBufCodecs.STRING_UTF8, ChatMessageData::chatTarget,
+                    ByteBufCodecs.STRING_UTF8, ChatMessageData::chatOrigin,
+                    ByteBufCodecs.STRING_UTF8, ChatMessageData::message,
+                    ByteBufCodecs.VAR_INT, ChatMessageData::dayTimes,
                     ChatMessageData::new             // 解码时通过name+age构造MyData实例
             );
 

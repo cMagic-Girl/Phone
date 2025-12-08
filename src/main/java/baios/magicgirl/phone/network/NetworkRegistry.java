@@ -2,7 +2,7 @@ package baios.magicgirl.phone.network;
 
 
 import baios.magicgirl.phone.MagicGirlPhone;
-import baios.magicgirl.phone.data.ChatMessageData;
+import baios.magicgirl.phone.data.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -29,6 +29,29 @@ public class NetworkRegistry {
                         ClientPayloadHandler::handleData,  // 客户端接收时的处理器
                         ServerPayloadHandler::handleData   // 服务端接收时的处理器
                 )
+        );
+
+        registrar.playToServer(
+                ChatAppOpenGet.TYPE,
+                ChatAppOpenGet.STREAM_CODEC,
+                ServerPayloadHandler::handleChatAppOpenGet
+        );
+        registrar.playToServer(
+                ChatHistoryGet.TYPE,
+                ChatHistoryGet.STREAM_CODEC,
+                ServerPayloadHandler::handleChatHistoryGet
+        );
+
+        registrar.playToClient(
+                ChatAppOpenData.TYPE,
+                ChatAppOpenData.STREAM_CODEC,
+                ClientPayloadHandler::handleChatAppOpenData
+        );
+
+        registrar.playToClient(
+                ChatHistoryData.TYPE,
+                ChatHistoryData.STREAM_CODEC,
+                ClientPayloadHandler::handleChatHistoryData
         );
 
     }

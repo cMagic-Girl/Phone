@@ -1,20 +1,33 @@
 package baios.magicgirl.phone.network;
 
+import baios.magicgirl.phone.data.ChatAppOpenData;
+import baios.magicgirl.phone.data.ChatAppOpenGet;
+import baios.magicgirl.phone.data.ChatHistoryGet;
 import baios.magicgirl.phone.data.ChatMessageData;
+import baios.magicgirl.phone.util.ChatHistoryNbtFile;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import java.util.List;
+
 public class ServerPayloadHandler {
     // 服务端接收Payload时的处理方法
     public static void handleData(final ChatMessageData data, final IPayloadContext context) {
         // 1. 网络线程中执行轻量级计算（避免阻塞主线程）
-        String chatTarget = data.chatTarget();
         String chatOrigin = data.chatOrigin();
+        String chatTarget = data.chatTarget();
         String message = data.message();
         int dayTimes = data.dayTimes();
-        System.out.println("服务端接收数据：" + chatOrigin+"向" + chatTarget + "发送了消息：" + message);
+        System.out.println("Server Data:" + chatOrigin + "->" + chatTarget + " send message:" + message);
+        CompoundTag messageTag = new CompoundTag();
+        messageTag.putString("chatOrigin", chatOrigin);
+        messageTag.putString("chatTarget", chatTarget);
+        messageTag.putString("message", message);
+        messageTag.putInt("dayTimes", dayTimes);
+        ChatHistoryNbtFile.writeChatHistory(messageTag);
 
         // 2. 若需操作游戏逻辑（如修改实体、世界），需切换到主线程
         context.enqueueWork(() -> {
@@ -22,7 +35,8 @@ public class ServerPayloadHandler {
                     // 主线程中执行的逻辑（如给玩家发送消息、修改玩家数据）
                     // player.sendSystemMessage(Component.literal("给" + chatTarget + "发送："+ message));
 
-                    ChatMessageData payload = new ChatMessageData("服务器"+chatTarget, chatOrigin, message,dayTimes);
+                    ChatMessageData payload = new ChatMessageData("服务器" + chatTarget, chatOrigin, message, dayTimes);
+
 
                     PacketDistributor.sendToAllPlayers(payload);
 
@@ -32,5 +46,21 @@ public class ServerPayloadHandler {
                     context.disconnect(Component.translatable("mymod.network.error", e.getMessage()));
                     return null;
                 });
+    }
+
+
+    public static void handleChatAppOpenGet(ChatAppOpenGet data, IPayloadContext iPayloadContext) {
+        String phoneName = data.phoneName();
+        System.out.println("Server Data:" + phoneName + " Open ChatApp");
+        ChatAppOpenData chatMessageData = new ChatAppOpenData("ema_phone:ema|hiro_phone:hiro|koko_phone:koko|sherii_phone:sherii|hanna_phone:hanna|anan_phone:anan|noa_phone:noa|reia_phone:reia|miria_phone:miria|nanoka_phone:nanoka|maago_phone:maago|arisa_phone:arisa|meruru_phone:meruru");
+        PacketDistributor.sendToAllPlayers(chatMessageData);
+    }
+
+    public static void handleChatHistoryGet(ChatHistoryGet data, IPayloadContext iPayloadContext) {
+        String chatTarget = data.chatTarget();
+        String chatOrigin = data.chatOrigin();
+        CompoundTag historyList = ChatHistoryNbtFile.readChatHistory(chatTarget, chatOrigin);
+        System.out.println("historyList: " + historyList);
+
     }
 }

@@ -46,8 +46,8 @@ public class ChatPlayerList extends ContainerObjectSelectionList<ChatPlayerEntry
     }
 
 
-    public void addPlayerEntry(ResourceLocation avatar, String playerName, Runnable onSelect) {
-        ChatPlayerEntry entry = new ChatPlayerEntry(avatar, playerName, clickedEntry -> {
+    public void addPlayerEntry(ResourceLocation avatar, String playerName,String lastMessage, Runnable onSelect) {
+        ChatPlayerEntry entry = new ChatPlayerEntry(avatar, playerName, lastMessage,clickedEntry -> {
             // 1. 列表内同步选中态
             this.setSelectedEntry(clickedEntry);
             // 2. 触发Screen的业务逻辑

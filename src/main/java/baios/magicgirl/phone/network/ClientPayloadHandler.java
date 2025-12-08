@@ -1,11 +1,16 @@
 package baios.magicgirl.phone.network;
 
+import baios.magicgirl.phone.data.ChatAppOpenData;
+import baios.magicgirl.phone.data.ChatHistoryData;
 import baios.magicgirl.phone.data.ChatMessageData;
 import baios.magicgirl.phone.item.ModItems;
 import baios.magicgirl.phone.screen.PhoneScreen;
+import baios.magicgirl.phone.util.NbtStringManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
@@ -36,5 +41,25 @@ public class ClientPayloadHandler {
             }
             phoneScreen.test="服务器收到消息" +data.message();
         }
+    }
+  public static void handleChatAppOpenData(ChatAppOpenData data, IPayloadContext iPayloadContext) {
+        String Msg = data.chatMsg_1();
+        System.out.println("Client Data:" + Msg);
+        CompoundTag compound = NbtStringManager.structuredStringToCompound(Msg, "\\|", ":");
+
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer localPlayer = minecraft.player;
+        Screen currentScreen = minecraft.screen;
+        if (currentScreen instanceof PhoneScreen phoneScreen) {
+            for (String key : compound.getAllKeys()) {
+                System.out.println("Key Name:" + key+ "Value:"+compound.getString(key));
+                phoneScreen.lastMessageMap.put(key, compound.getString(key));
+            }
+            phoneScreen.setChatList();
+        }
+
+    }
+
+    public static void handleChatHistoryData(ChatHistoryData data, IPayloadContext iPayloadContext) {
     }
 }

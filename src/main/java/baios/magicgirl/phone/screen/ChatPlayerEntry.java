@@ -21,8 +21,9 @@ public class ChatPlayerEntry extends ContainerObjectSelectionList.Entry<ChatPlay
     private final Font font = Minecraft.getInstance().font;
     private final ResourceLocation playerAvatar;
 
+    private final String playerId;
     private final String playerName;
-    private String lastMessage = "这是一条测试消息";
+    private String lastMessage;
     private int unreadCount = 1;
 
     // 状态
@@ -32,11 +33,13 @@ public class ChatPlayerEntry extends ContainerObjectSelectionList.Entry<ChatPlay
 
     private final Consumer<ChatPlayerEntry> onClickCallback;
 
-    public ChatPlayerEntry(ResourceLocation playerAvatar, String name, Consumer<ChatPlayerEntry> onClickCallback) {
+    public ChatPlayerEntry(ResourceLocation playerAvatar, String name, String lastMessage, Consumer<ChatPlayerEntry> onClickCallback) {
         super();
         this.playerAvatar = playerAvatar;
+        this.playerId = name;
         this.playerName = I18n.get("gui.magic_girl_phone." + name);
         this.onClickCallback = onClickCallback;
+        this.lastMessage = lastMessage;
     }
 
 
@@ -72,7 +75,6 @@ public class ChatPlayerEntry extends ContainerObjectSelectionList.Entry<ChatPlay
             if (this.onClickCallback != null) {
                 this.onClickCallback.accept(this);
             }
-            System.out.println("点击了");
             return true;
         }
         return false;
@@ -84,6 +86,10 @@ public class ChatPlayerEntry extends ContainerObjectSelectionList.Entry<ChatPlay
 
     public ResourceLocation getPlayerAvatar() {
         return playerAvatar;
+    }
+
+    public String getPlayerId() {
+        return playerId;
     }
 
     public String getPlayerName() {

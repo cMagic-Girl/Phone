@@ -1,11 +1,14 @@
 package baios.magicgirl.phone.screen;
 
+import baios.magicgirl.phone.data.ChatAppOpenGet;
+import baios.magicgirl.phone.data.ChatHistoryGet;
 import baios.magicgirl.phone.data.ChatMessageData;
+import baios.magicgirl.phone.util.ChatHistoryNbtFile;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
@@ -49,6 +52,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     private static final ResourceLocation arisaAvatar = ResourceLocation.parse("magic_girl_phone:textures/gui/player/arisa.png");
     private static final ResourceLocation meruruAvatar = ResourceLocation.parse("magic_girl_phone:textures/gui/player/meruru.png");
 
+
     // 屏幕ID
     protected interface screenType {
         int HOME = 0;
@@ -76,6 +80,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     // 聊天对象
     private String chatTarget = "default";
+    private String chatTargetPhone = "default";
 
     // 聊天对象列表
     private List<String> playerList = List.of("ema_phone", "hiro_phone", "koko_phone", "sherii_phone", "hanna_phone", "anan_phone", "noa_phone", "reia_phone", "miria_phone", "nanoka_phone", "maago_phone", "arisa_phone", "meruru_phone");
@@ -97,6 +102,23 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             Map.entry("meruru_phone", "meruru")
     );
 
+    // 手机号映射
+    private Map<String, String> phoneMap = Map.ofEntries(
+            Map.entry("ema", "ema_phone"),
+            Map.entry("hiro", "hiro_phone"),
+            Map.entry("koko", "koko_phone"),
+            Map.entry("sherii", "sherii_phone"),
+            Map.entry("hanna", "hanna_phone"),
+            Map.entry("anan", "anan_phone"),
+            Map.entry("noa", "noa_phone"),
+            Map.entry("reia", "reia_phone"),
+            Map.entry("miria", "miria_phone"),
+            Map.entry("nanoka", "nanoka_phone"),
+            Map.entry("maago", "maago_phone"),
+            Map.entry("arisa", "arisa_phone"),
+            Map.entry("meruru", "meruru_phone")
+    );
+
     // 头像映射
     protected Map<String, ResourceLocation> avatarMap = Map.ofEntries(
             Map.entry("ema_phone", emaAvatar),
@@ -113,6 +135,8 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             Map.entry("arisa_phone", arisaAvatar),
             Map.entry("meruru_phone", meruruAvatar)
     );
+
+    public Map<String,String> lastMessageMap = new HashMap<>();
 
     // 以下为屏幕组件
     private Button home;
@@ -202,7 +226,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.sendMessageButton = Button.builder(Component.translatable("gui.magic_girl_phone.phone_screen.send_button"), e -> {
             String msg = messageInputBox.getValue();
             if(!msg.isEmpty()) {
-                ChatMessageData payload = new ChatMessageData(chatTarget, this.phoneOwer, msg, (int) this.world.getDayTime());
+                ChatMessageData payload = new ChatMessageData(phoneName, this.chatTargetPhone, msg, (int) this.world.getDayTime());
                 //entity.sendSystemMessage(Component.literal(playerMap.get(phoneName) +"向"+this.chatTarget+"发送消息了:"+ msg));
                 messageInputBox.setValue("");
                 // 2. 通过PacketDistributor发送到服务端
@@ -233,21 +257,13 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.chatPlayerList.setX(this.leftPos + 8);
         this.chatPlayerList.setY(this.topPos + 25);
 
-        for (String phoneName : playerList) {
-            if (Objects.equals(phoneName, this.phoneName)) {
-                continue;
-            }
-            String playerName = playerMap.get(phoneName);
-            System.out.println("添加玩家：" + playerName);
-            this.chatPlayerList.addPlayerEntry(avatarMap.get(phoneName), playerName, () -> this.onPlayerSelected(this.chatPlayerList.getSelectedEntry().orElse(null)));
-        }
+
 
         //
         this.chatHistoryList = new ChatHistoryList(this.minecraft, 220, 150, 0, 34);
         this.chatHistoryList.setX(this.leftPos + 130);
         this.chatHistoryList.setY(this.topPos + 10);
-        this.chatHistoryList.addMessageEntry(avatarMap.get(phoneName), playerMap.get(phoneName),"你好！");
-        this.chatHistoryList.addMessageEntry(avatarMap.get(phoneName), playerMap.get(phoneName),"我不好！");
+
 
         // 添加组件到屏幕
         this.addRenderableWidget(home);
@@ -260,6 +276,12 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.addWidget(this.chatPlayerList);
         this.addWidget(this.chatHistoryList);
 
+        CompoundTag rootTag = ChatHistoryNbtFile.fileToNBT("phone_data.nbt");;
+        System.out.println(rootTag);
+        System.out.println(rootTag.get("phone_data"));
+
+
+
 
 
         // 初始化时显示
@@ -270,17 +292,29 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     //聊天对象处理选中逻辑
     private void onPlayerSelected(ChatPlayerEntry selectedEntry) {
         if (selectedEntry == null) {
-            this.chatTarget = "default";
             this.chatHistoryList.visible = false;
             this.messageInputBox.visible = false;
             this.sendMessageButton.visible = false;
-            System.out.println("未选中任何玩家");
             return;
         }
         this.chatHistoryList.visible = true;
         this.messageInputBox.visible = true;
         this.sendMessageButton.visible = true;
-        this.chatTarget = selectedEntry.getPlayerName();
+
+        if (!selectedEntry.getPlayerName().equals(this.chatTarget)) {
+            this.chatHistoryList.clear();
+            this.chatTarget = selectedEntry.getPlayerName();
+            this.chatTargetPhone = phoneMap.get(selectedEntry.getPlayerId());
+            ChatHistoryGet payload = new ChatHistoryGet(phoneName, chatTargetPhone);
+            PacketDistributor.sendToServer(payload);
+        }
+
+
+    }
+
+    public void chatHistoryAdd(String phoneName, String chatTarget, String chatMsg) {
+        boolean isMine = phoneName.equals(this.phoneName);
+        this.chatHistoryList.addMessageEntry(avatarMap.get(phoneName), playerMap.get(phoneName),chatMsg, isMine);
     }
 
     // 切换屏幕
@@ -321,6 +355,11 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
                 this.timeLabelX = 80;
                 this.home.setPosition(this.leftPos + (this.phoneWidth / 2) - 12, this.topPos + 160);
+
+                ChatAppOpenGet chatAppOpenGet = new ChatAppOpenGet(phoneName);
+
+                PacketDistributor.sendToServer(chatAppOpenGet);
+
                 break;
             case screenType.Recorder:
                 this.screenID = screenType.Recorder;
@@ -339,6 +378,18 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 this.timeLabelX = 80;
                 this.home.setPosition(this.leftPos + (this.phoneWidth / 2) - 12, this.topPos + 160);
                 break;
+        }
+    }
+
+    public void setChatList(){
+        for (String phoneName : playerList) {
+            if (Objects.equals(phoneName, this.phoneName)) {
+                continue;
+            }
+            String playerName = playerMap.get(phoneName);
+            String lastMessage = lastMessageMap.get(phoneName);
+            //System.out.println("添加玩家：" + playerName);
+            this.chatPlayerList.addPlayerEntry(avatarMap.get(phoneName), playerName,lastMessage, () -> this.onPlayerSelected(this.chatPlayerList.getSelectedEntry().orElse(null)));
         }
     }
 
@@ -437,6 +488,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                     0xFFFFFFFF
             );
         }
+
     }
 
     //每一帧都会调用该渲染方法
@@ -518,7 +570,6 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
         this.vscodeApp.visible = false;
         this.home.visible = false;
     }
-
 
 }
 

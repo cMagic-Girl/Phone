@@ -10,8 +10,13 @@ public class ChatHistoryList extends ContainerObjectSelectionList<ChatMessageEnt
         super(minecraft, width, height, y, itemHeight);
     }
 
-    public void addMessageEntry(ResourceLocation avatar, String playerName,String message) {
-        ChatMessageEntry entry = new ChatMessageEntry(avatar, message,playerName,true);
+    public void addMessageEntry(ResourceLocation avatar, String playerName,String message ,Boolean isMine) {
+        ChatMessageEntry entry = new ChatMessageEntry(avatar, message,playerName,isMine);
         this.addEntry(entry);
+
+    }
+
+    public void clear() {
+        this.clearEntries();
     }
 }
