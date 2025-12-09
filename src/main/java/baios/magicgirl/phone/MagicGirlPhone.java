@@ -2,12 +2,12 @@ package baios.magicgirl.phone;
 
 import baios.magicgirl.phone.item.ModItems;
 import baios.magicgirl.phone.menu.ModMenus;
+import baios.magicgirl.phone.util.ChatHistorySql;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -38,6 +38,7 @@ public class MagicGirlPhone {
         ModItems.REGISTRY.register(modEventBus);
         ModCreativeTabs.REGISTRY.register(modEventBus);
         ModMenus.REGISTRY.register(modEventBus);
+        ChatHistorySql.init_db();
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (MagicGirlPhone) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.

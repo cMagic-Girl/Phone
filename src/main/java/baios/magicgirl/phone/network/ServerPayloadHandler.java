@@ -1,15 +1,12 @@
 package baios.magicgirl.phone.network;
 
 import baios.magicgirl.phone.data.*;
-import baios.magicgirl.phone.util.ChatHistoryNbtFile;
-import baios.magicgirl.phone.util.NbtStringManager;
+import baios.magicgirl.phone.util.ChatHistorySql;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import java.util.List;
 
 public class ServerPayloadHandler {
     // 服务端接收Payload时的处理方法
@@ -19,13 +16,15 @@ public class ServerPayloadHandler {
         String chatTarget = data.chatTarget();
         String message = data.message();
         int dayTimes = data.dayTimes();
-        System.out.println("Server Data:" + chatOrigin + "->" + chatTarget + " send message:" + message);
+
         CompoundTag messageTag = new CompoundTag();
         messageTag.putString("chatOrigin", chatOrigin);
         messageTag.putString("chatTarget", chatTarget);
         messageTag.putString("message", message);
         messageTag.putInt("dayTimes", dayTimes);
-        ChatHistoryNbtFile.writeChatHistory(messageTag);
+
+        ChatHistorySql.writeChatHistory(messageTag);
+
         ServerPlayer player = (ServerPlayer) context.player();
         ChatMessageCallBack chatMessageCallBack = new ChatMessageCallBack(true);
         PacketDistributor.sendToPlayer(player, chatMessageCallBack);
@@ -54,8 +53,9 @@ public class ServerPayloadHandler {
     public static void handleChatHistoryGet(ChatHistoryGet data, IPayloadContext iPayloadContext) {
         String chatTarget = data.chatTarget();
         String chatOrigin = data.chatOrigin();
-        CompoundTag historyList = ChatHistoryNbtFile.readChatHistory(chatTarget, chatOrigin);
-        System.out.println("historyList: " + historyList);
+
+        CompoundTag historyList = ChatHistorySql.readChatHistory(chatTarget, chatOrigin);
+
         ChatHistoryData chatHistoryData = new ChatHistoryData(historyList);
         ServerPlayer player = (ServerPlayer) iPayloadContext.player();
         PacketDistributor.sendToPlayer(player ,chatHistoryData);

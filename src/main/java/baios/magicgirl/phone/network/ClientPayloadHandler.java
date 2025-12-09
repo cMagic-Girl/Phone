@@ -71,11 +71,10 @@ public class ClientPayloadHandler {
         Screen currentScreen = minecraft.screen;
         if (currentScreen instanceof PhoneScreen phoneScreen) {
             int i;
-            for (i = 1; i <= history.size(); i++) {
+            for (i = history.size(); i >=1 ; i--) {
                 String key = String.valueOf(i);
                 if (history.contains(key, Tag.TAG_COMPOUND)) {
                     CompoundTag messageData = history.getCompound(key);
-                    System.out.println("messageData:" + messageData);
                     String message = messageData.getString("message");
                     String chatOrigin = messageData.getString("chatOrigin");
                     String chatTarget = messageData.getString("chatTarget");
