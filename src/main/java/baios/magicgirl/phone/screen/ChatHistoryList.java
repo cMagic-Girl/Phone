@@ -13,6 +13,7 @@ public class ChatHistoryList extends ContainerObjectSelectionList<ChatMessageEnt
     public void addMessageEntry(ResourceLocation avatar, String playerName,String message ,Boolean isMine) {
         ChatMessageEntry entry = new ChatMessageEntry(avatar, message,playerName,isMine);
         this.addEntry(entry);
+        this.ensureVisible(entry);
 
     }
 
