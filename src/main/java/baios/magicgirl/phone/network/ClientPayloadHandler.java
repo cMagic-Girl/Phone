@@ -26,21 +26,23 @@ public class ClientPayloadHandler {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer localPlayer = minecraft.player;
         Screen currentScreen = minecraft.screen;
-        if (currentScreen instanceof PhoneScreen phoneScreen) {
-            if (localPlayer != null) {
-                // 2. 通过物品ID获取Item实例
-                Item targetItem = ModItems.phoneItemMap.get(chatTarget).get();
+        if (localPlayer != null) {
+            // 通过物品ID获取Item实例
+            Item targetItem = ModItems.phoneItemMap.get(chatTarget).get();
 
-                // 3. 遍历本地玩家背包检查
-                Inventory inventory = localPlayer.getInventory();
-                for (int i = 0; i < inventory.getContainerSize(); i++) {
-                    ItemStack stack = inventory.getItem(i);
-                    if (!stack.isEmpty() && stack.is(targetItem)) {
+            // 3. 遍历本地玩家背包检查
+            Inventory inventory = localPlayer.getInventory();
+            for (int i = 0; i < inventory.getContainerSize(); i++) {
+                ItemStack stack = inventory.getItem(i);
+                if (!stack.isEmpty() && stack.is(targetItem)) {
+                    if (currentScreen instanceof PhoneScreen phoneScreen) {
+                        phoneScreen.chatHistoryUpdate();
+                    }else {
                         localPlayer.displayClientMessage(Component.literal("你的手机震动了一下"), false);
                     }
                 }
             }
-            phoneScreen.test = "服务器收到消息" + data.message();
+
         }
     }
 
@@ -72,7 +74,7 @@ public class ClientPayloadHandler {
             for (i = 1; i <= history.size(); i++) {
                 String key = String.valueOf(i);
                 if (history.contains(key, Tag.TAG_COMPOUND)) {
-                    CompoundTag messageData =history.getCompound(key);
+                    CompoundTag messageData = history.getCompound(key);
                     System.out.println("messageData:" + messageData);
                     String message = messageData.getString("message");
                     String chatOrigin = messageData.getString("chatOrigin");
@@ -86,7 +88,7 @@ public class ClientPayloadHandler {
     }
 
     public static void handleChatMessageCallBack(ChatMessageCallBack chatMessageCallBack, IPayloadContext iPayloadContext) {
-        if(chatMessageCallBack.isSuccess()){
+        if (chatMessageCallBack.isSuccess()) {
             Minecraft minecraft = Minecraft.getInstance();
             LocalPlayer localPlayer = minecraft.player;
             Screen currentScreen = minecraft.screen;
