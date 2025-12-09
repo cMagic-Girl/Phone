@@ -21,22 +21,22 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class ClientPayloadHandler {
     // 方法签名必须匹配：MyData + IPayloadContext，静态方法，void返回值
     public static void handleData(ChatMessageData data, IPayloadContext context) {
+        String chatTarget = data.chatTarget();
         // 客户端处理逻辑
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer localPlayer = minecraft.player;
         Screen currentScreen = minecraft.screen;
         if (currentScreen instanceof PhoneScreen phoneScreen) {
             if (localPlayer != null) {
-
                 // 2. 通过物品ID获取Item实例
-                Item targetItem = ModItems.HIRO_PHONE.get();
+                Item targetItem = ModItems.phoneItemMap.get(chatTarget).get();
 
                 // 3. 遍历本地玩家背包检查
                 Inventory inventory = localPlayer.getInventory();
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
                     ItemStack stack = inventory.getItem(i);
                     if (!stack.isEmpty() && stack.is(targetItem)) {
-                        localPlayer.displayClientMessage(Component.literal("你已收到一条消息：" + data.message()), false);
+                        localPlayer.displayClientMessage(Component.literal("你的手机震动了一下"), false);
                     }
                 }
             }
