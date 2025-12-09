@@ -5,6 +5,8 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.Map;
+
 public class ModItems {
     public static final DeferredRegister.Items REGISTRY =
             DeferredRegister.createItems(MagicGirlPhone.MODID);
@@ -39,4 +41,20 @@ public class ModItems {
         MERURU_PHONE = REGISTRY.register("meruru_phone",()->new PhoneItem("meruru_phone"));
     }
 
+
+    public static Map<String,DeferredItem<Item>> phoneItemMap = Map.ofEntries(
+            Map.entry("ema_phone",EMA_PHONE),
+            Map.entry("hiro_phone",HIRO_PHONE),
+            Map.entry("koko_phone",KOKO_PHONE),
+            Map.entry("sherii_phone",SHERII_PHONE),
+            Map.entry("hanna_phone",HANNA_PHONE),
+            Map.entry("anan_phone",ANAN_PHONE),
+            Map.entry("noa_phone",NOA_PHONE),
+            Map.entry("reia_phone",REIA_PHONE),
+            Map.entry("miria_phone",MIRIA_PHONE),
+            Map.entry("nanoka_phone",NANOKA_PHONE),
+            Map.entry("maago_phone",MAAGO_PHONE),
+            Map.entry("arisa_phone",ARISA_PHONE),
+            Map.entry("meruru_phone",MERURU_PHONE)
+    );
 }
