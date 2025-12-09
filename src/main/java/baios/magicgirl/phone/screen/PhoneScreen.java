@@ -289,6 +289,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     //聊天对象处理选中逻辑
     private void onPlayerSelected(ChatPlayerEntry selectedEntry) {
+        if (screenID!=screenType.CHAT){
+            return;
+        }
         if (selectedEntry == null) {
             this.chatHistoryList.visible = false;
             this.messageInputBox.visible = false;
