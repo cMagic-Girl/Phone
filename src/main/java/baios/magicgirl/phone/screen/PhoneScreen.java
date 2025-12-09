@@ -334,8 +334,8 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 this.screenID = screenType.HOME;
 
                 this.chatApp.visible = true;
-                this.recorderApp.visible = true;
-                this.vscodeApp.visible = true;
+                this.recorderApp.visible = false;
+                this.vscodeApp.visible = false;
 
                 this.messageInputBox.visible = false;
                 this.chatPlayerList.visible = false;
