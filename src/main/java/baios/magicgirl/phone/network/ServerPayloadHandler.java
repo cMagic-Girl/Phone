@@ -31,15 +31,10 @@ public class ServerPayloadHandler {
         PacketDistributor.sendToPlayer(player, chatMessageCallBack);
         // 2. 若需操作游戏逻辑（如修改实体、世界），需切换到主线程
         context.enqueueWork(() -> {
-
                     // 主线程中执行的逻辑（如给玩家发送消息、修改玩家数据）
                     // player.sendSystemMessage(Component.literal("给" + chatTarget + "发送："+ message));
-
-                    ChatMessageData payload = new ChatMessageData("服务器" + chatTarget, chatOrigin, message, dayTimes);
-
-
+                    ChatMessageData payload = new ChatMessageData(chatOrigin,chatTarget,  message, dayTimes);
                     PacketDistributor.sendToAllPlayers(payload);
-
                 })
                 .exceptionally(e -> {  // 处理主线程任务的异常
                     // 异常时断开连接（可选）
