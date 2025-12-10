@@ -21,6 +21,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class ClientPayloadHandler {
     // 方法签名必须匹配：MyData + IPayloadContext，静态方法，void返回值
     public static void handleData(ChatMessageData data, IPayloadContext context) {
+        String chatOrigin = data.chatOrigin();
         String chatTarget = data.chatTarget();
         // 客户端处理逻辑
         Minecraft minecraft = Minecraft.getInstance();
@@ -28,20 +29,36 @@ public class ClientPayloadHandler {
         Screen currentScreen = minecraft.screen;
         if (localPlayer != null) {
             // 通过物品ID获取Item实例
+            Item originItem = ModItems.phoneItemMap.get(chatOrigin).get();
             Item targetItem = ModItems.phoneItemMap.get(chatTarget).get();
 
+            boolean isTarget = false;
+            boolean isOrigin = false;
             // 3. 遍历本地玩家背包检查
             Inventory inventory = localPlayer.getInventory();
             for (int i = 0; i < inventory.getContainerSize(); i++) {
                 ItemStack stack = inventory.getItem(i);
                 if (!stack.isEmpty() && stack.is(targetItem)) {
-                    if (currentScreen instanceof PhoneScreen phoneScreen) {
-                        phoneScreen.chatHistoryUpdate();
-                    }else {
-                        localPlayer.displayClientMessage(Component.literal("你的手机震动了一下"), false);
-                    }
+                    isTarget = true;
                 }
             }
+            for (int i = 0; i < inventory.getContainerSize(); i++) {
+                ItemStack stack = inventory.getItem(i);
+                if (!stack.isEmpty() && stack.is(originItem)) {
+                    isOrigin = true ;
+                }
+            }
+            if (isOrigin && isTarget) {
+                localPlayer.displayClientMessage(Component.literal("你的手机震动了一下"), false);
+
+            } else if (!isOrigin && isTarget) {
+                if ((currentScreen instanceof PhoneScreen phoneScreen)) {
+                    phoneScreen.chatHistoryUpdate();
+                }else {
+                    localPlayer.displayClientMessage(Component.literal("你的手机震动了一下"), false);
+                }
+            }
+
 
         }
     }
