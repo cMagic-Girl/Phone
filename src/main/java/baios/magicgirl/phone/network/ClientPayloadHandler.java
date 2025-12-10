@@ -6,7 +6,7 @@ import baios.magicgirl.phone.data.ChatMessageCallBack;
 import baios.magicgirl.phone.data.ChatMessageData;
 import baios.magicgirl.phone.item.ModItems;
 import baios.magicgirl.phone.screen.PhoneScreen;
-import baios.magicgirl.phone.util.NbtStringManager;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
@@ -47,17 +47,14 @@ public class ClientPayloadHandler {
     }
 
     public static void handleChatAppOpenData(ChatAppOpenData data, IPayloadContext iPayloadContext) {
-        String Msg = data.chatMsg_1();
-        System.out.println("Client Data:" + Msg);
-        CompoundTag compound = NbtStringManager.structuredStringToCompound(Msg, "\\|", ":");
+        CompoundTag Msg = data.chatMsg_1();
 
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer localPlayer = minecraft.player;
         Screen currentScreen = minecraft.screen;
         if (currentScreen instanceof PhoneScreen phoneScreen) {
-            for (String key : compound.getAllKeys()) {
-                System.out.println("Key Name:" + key + "Value:" + compound.getString(key));
-                phoneScreen.lastMessageMap.put(key, compound.getString(key));
+            for (String key : Msg.getAllKeys()) {
+                phoneScreen.lastMessageMap.put(key, Msg.getString(key));
             }
             phoneScreen.setChatList();
         }

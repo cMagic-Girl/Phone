@@ -84,6 +84,29 @@ public class ChatHistorySql {
         return chatHistoryList;
     }
 
+    public static CompoundTag readChatListLatestMessage(String chatTarget) {
+        CompoundTag LatestMessage = new CompoundTag();
+
+        String sql = "SELECT id, chatOrigin, chatTarget, message, time " +
+                "FROM user_history " +
+                "WHERE chatTarget = ? " +
+                "ORDER BY id DESC";
+
+        try (Connection conn = DriverManager.getConnection(getSqliteUrl());
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, chatTarget);
+
+            ResultSet rs = pstmt.executeQuery();
+            // 遍历结果，封装成易读的字符串
+            while (rs.next()) {
+                LatestMessage.putString(rs.getString("chatTarget"),rs.getString("message"));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return LatestMessage;
+    }
+
 
     public static void writeChatHistory(CompoundTag messageData) {
         String insertSql = "INSERT INTO user_history (chatOrigin, chatTarget, message, dayTimes) VALUES (?, ?, ?, ?)";

@@ -45,8 +45,8 @@ public class ServerPayloadHandler {
 
     public static void handleChatAppOpenGet(ChatAppOpenGet data, IPayloadContext iPayloadContext) {
         String phoneName = data.phoneName();
-        System.out.println("Server Data:" + phoneName + " Open ChatApp");
-        ChatAppOpenData chatMessageData = new ChatAppOpenData("ema_phone:ema|hiro_phone:hiro|koko_phone:koko|sherii_phone:sherii|hanna_phone:hanna|anan_phone:anan|noa_phone:noa|reia_phone:reia|miria_phone:miria|nanoka_phone:nanoka|maago_phone:maago|arisa_phone:arisa|meruru_phone:meruru");
+        CompoundTag lastMessageList = ChatHistorySql.readChatListLatestMessage(phoneName);
+        ChatAppOpenData chatMessageData = new ChatAppOpenData(lastMessageList);
         PacketDistributor.sendToAllPlayers(chatMessageData);
     }
 

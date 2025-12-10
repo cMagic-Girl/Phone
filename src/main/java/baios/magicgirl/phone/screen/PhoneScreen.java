@@ -395,6 +395,9 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             }
             String playerName = playerMap.get(phoneName);
             String lastMessage = lastMessageMap.get(phoneName);
+            if (lastMessageMap.get(phoneName)==null){
+                lastMessage = "";
+            }
             //System.out.println("添加玩家：" + playerName);
             this.chatPlayerList.addPlayerEntry(avatarMap.get(phoneName), playerName, lastMessage, () -> this.onPlayerSelected(this.chatPlayerList.getSelectedEntry().orElse(null)));
         }
