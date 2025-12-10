@@ -10,6 +10,7 @@ import baios.magicgirl.phone.screen.PhoneScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -22,14 +23,27 @@ public class ClientPayloadHandler {
     // 方法签名必须匹配：MyData + IPayloadContext，静态方法，void返回值
     public static void handleData(ChatMessageData data, IPayloadContext context) {
         String chatOrigin = data.chatOrigin();
+        String chatName = PhoneScreen.playerMap.get(chatOrigin);
+        chatName= I18n.get("gui.magic_girl_phone." + chatName);
+        String chatMsg = data.message();
+
         String chatTarget = data.chatTarget();
+        String chatTargetName = PhoneScreen.playerMap.get(chatTarget);
+        chatTargetName= I18n.get("gui.magic_girl_phone." + chatTargetName);
+
         // 客户端处理逻辑
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer localPlayer = minecraft.player;
+        boolean isSpectator = localPlayer.isSpectator();
+        if (isSpectator) {
+            localPlayer.displayClientMessage(Component.literal("「小手机私聊」"+chatName+" -> "+chatTargetName+" : "+chatMsg), false);
+            return;
+        }
         Screen currentScreen = minecraft.screen;
         if (localPlayer != null) {
             // 通过物品ID获取Item实例
             Item originItem = ModItems.phoneItemMap.get(chatOrigin).get();
+
             Item targetItem = ModItems.phoneItemMap.get(chatTarget).get();
 
             boolean isTarget = false;
@@ -49,13 +63,13 @@ public class ClientPayloadHandler {
                 }
             }
             if (isOrigin && isTarget) {
-                localPlayer.displayClientMessage(Component.literal("你的手机震动了一下"), false);
+                localPlayer.displayClientMessage(Component.literal("你收到了一条"+chatName+"发的消息"), false);
 
             } else if (!isOrigin && isTarget) {
                 if ((currentScreen instanceof PhoneScreen phoneScreen)) {
                     phoneScreen.chatHistoryUpdate();
                 }else {
-                    localPlayer.displayClientMessage(Component.literal("你的手机震动了一下"), false);
+                    localPlayer.displayClientMessage(Component.literal("你收到了一条"+chatName+"发的消息"), false);
                 }
             }
 

@@ -84,7 +84,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     private List<String> playerList = List.of("ema_phone", "hiro_phone", "koko_phone", "sherii_phone", "hanna_phone", "anan_phone", "noa_phone", "reia_phone", "miria_phone", "nanoka_phone", "maago_phone", "arisa_phone", "meruru_phone");
 
     // 玩家信息映射
-    protected Map<String, String> playerMap = Map.ofEntries(
+    public static Map<String, String> playerMap = Map.ofEntries(
             Map.entry("ema_phone", "ema"),
             Map.entry("hiro_phone", "hiro"),
             Map.entry("koko_phone", "koko"),
@@ -245,7 +245,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 18, // 高度
                 Component.translatable("gui.magic_girl_phone.phone_screen.message")// 提示文本
         );
-        this.messageInputBox.setMaxLength(8192);
+        this.messageInputBox.setMaxLength(40);
         this.messageInputBox.setResponder(content -> {
             //if (!menuStateUpdateActive)
             //menu.sendMenuStateUpdate(entity, 0, "message", content, false);
