@@ -288,7 +288,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     //聊天对象处理选中逻辑
     private void onPlayerSelected(ChatPlayerEntry selectedEntry) {
-        if (screenID!=screenType.CHAT){
+        if (screenID != screenType.CHAT) {
             return;
         }
         if (selectedEntry == null) {
@@ -320,7 +320,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     public void chatHistoryAdd(String chatOrigin, String chatTarget, String chatMsg) {
         boolean isMine = chatOrigin.equals(this.phoneName);
-        System.out.println("is Mine:"+isMine);
+        System.out.println("is Mine:" + isMine);
         this.chatHistoryList.addMessageEntry(avatarMap.get(chatOrigin), playerMap.get(chatOrigin), chatMsg, isMine);
 
     }
@@ -396,7 +396,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             }
             String playerName = playerMap.get(phoneName);
             String lastMessage = lastMessageMap.get(phoneName);
-            if (lastMessageMap.get(phoneName)==null){
+            if (lastMessageMap.get(phoneName) == null) {
                 lastMessage = "";
             }
             //System.out.println("添加玩家：" + playerName);
@@ -481,12 +481,12 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 
-        long dayTime = world.getDayTime();
-        int hour = (int) (dayTime % 24000 / 1000) + 6;
+        long dayTime =  world.getDayTime();
+        int hour = (int)(dayTime % 24000 / 1000) + 6;
         if (hour >= 24) {
             hour %= 24;
         }
-        int minute = (int) (dayTime % 1000 / 20);
+        int minute =(int) (dayTime % 1000 /16.7f);
         String time = String.format("%02d:%02d", hour, minute);
 
         guiGraphics.drawString(this.font, Component.literal(time), this.timeLabelX, 15, -12829636, false);
