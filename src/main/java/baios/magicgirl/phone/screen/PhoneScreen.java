@@ -282,6 +282,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
         // 初始化时显示
         this.screenComponentManager(screenID);
+        this.setChatList();
 
     }
 
