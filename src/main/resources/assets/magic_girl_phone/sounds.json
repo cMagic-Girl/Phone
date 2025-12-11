@@ -1,0 +1,13 @@
+{
+  "phone_beep_sound": {
+    "sounds": [
+      {
+        "name": "magic_girl_phone:item/phone_beep_sound",
+        "stream": false,
+        "attenuation_distance": 4,
+        "preload": true
+      }
+    ],
+    "subtitle": "subtitles.magic_girl_phone.phone_beep_sound"
+  }
+}

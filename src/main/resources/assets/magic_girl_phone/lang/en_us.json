@@ -38,6 +38,8 @@
 
   "creative_tab.magic_girl_phone.phone_tab": "cMagic-Girl Phone",
 
+  "subtitles.magic_girl_phone.phone_beep_sound": "Phone Beep Sound",
+
   "magic_girl_phone.configuration.title": "Magic Girl Phone Configs",
   "magic_girl_phone.configuration.section.magic_girl_phone.common.toml": "Magic Girl Phone Configs",
   "magic_girl_phone.configuration.section.magic_girl_phone.common.toml.title": "Magic Girl Phone Configs",

@@ -2,7 +2,7 @@ package baios.magicgirl.phone;
 
 import baios.magicgirl.phone.item.ModItems;
 import baios.magicgirl.phone.menu.ModMenus;
-import baios.magicgirl.phone.util.ChatHistorySql;
+import baios.magicgirl.phone.sound.ModSounds;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -37,6 +37,7 @@ public class MagicGirlPhone {
         ModItems.REGISTRY.register(modEventBus);
         ModCreativeTabs.REGISTRY.register(modEventBus);
         ModMenus.REGISTRY.register(modEventBus);
+        ModSounds.REGISTRY.register(modEventBus);
 
 
         // Register ourselves for server and other game events we are interested in.

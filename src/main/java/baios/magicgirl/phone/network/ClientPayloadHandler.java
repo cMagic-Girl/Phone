@@ -7,13 +7,17 @@ import baios.magicgirl.phone.data.ChatMessageData;
 import baios.magicgirl.phone.item.ModItems;
 import baios.magicgirl.phone.screen.PhoneScreen;
 
+import baios.magicgirl.phone.sound.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +36,9 @@ public class ClientPayloadHandler {
         chatTargetName= I18n.get("gui.magic_girl_phone." + chatTargetName);
 
         // 客户端处理逻辑
+
         Minecraft minecraft = Minecraft.getInstance();
+        ClientLevel level =minecraft.level;
         LocalPlayer localPlayer = minecraft.player;
         boolean isSpectator = localPlayer.isSpectator();
         if (isSpectator) {
@@ -63,12 +69,32 @@ public class ClientPayloadHandler {
                 }
             }
             if (isOrigin && isTarget) {
+                BlockPos playerPos = localPlayer.blockPosition();
+                level.playSound(
+                        localPlayer,
+                        playerPos,
+                        ModSounds.PHONE_BEEP_SOUND.get(),
+                        SoundSource.PLAYERS,
+                        1.0f,
+                        1.0f
+
+                );
                 localPlayer.displayClientMessage(Component.literal("你收到了一条"+chatName+"发的消息"), false);
 
             } else if (!isOrigin && isTarget) {
                 if ((currentScreen instanceof PhoneScreen phoneScreen)) {
                     phoneScreen.chatHistoryUpdate();
                 }else {
+                    BlockPos playerPos = localPlayer.blockPosition();
+                    level.playSound(
+                            localPlayer,
+                            playerPos,
+                            ModSounds.PHONE_BEEP_SOUND.get(),
+                            SoundSource.PLAYERS,
+                            1.0f,
+                            1.0f
+
+                    );
                     localPlayer.displayClientMessage(Component.literal("你收到了一条"+chatName+"发的消息"), false);
                 }
             }
