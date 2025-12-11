@@ -6,7 +6,8 @@
 
 ### 前置条件
 - Minecraft 1.21.1
-- NeoForge 21.1.215 
+- NeoForge 21.1.211
+- sqlite-jdbc-3.51.0.0 (前置数据库mod)
 
 ## 使用说明
 
