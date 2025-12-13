@@ -245,7 +245,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 18, // 高度
                 Component.translatable("gui.magic_girl_phone.phone_screen.message")// 提示文本
         );
-        this.messageInputBox.setMaxLength(40);
+        this.messageInputBox.setMaxLength(80);
         this.messageInputBox.setResponder(content -> {
             //if (!menuStateUpdateActive)
             //menu.sendMenuStateUpdate(entity, 0, "message", content, false);
@@ -288,7 +288,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     //聊天对象处理选中逻辑
     private void onPlayerSelected(ChatPlayerEntry selectedEntry) {
-        if (screenID != screenType.CHAT) {
+        if (screenID!=screenType.CHAT){
             return;
         }
         if (selectedEntry == null) {
@@ -320,10 +320,26 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     public void chatHistoryAdd(String chatOrigin, String chatTarget, String chatMsg) {
         boolean isMine = chatOrigin.equals(this.phoneName);
-        System.out.println("is Mine:" + isMine);
-        this.chatHistoryList.addMessageEntry(avatarMap.get(chatOrigin), playerMap.get(chatOrigin), chatMsg, isMine);
 
+        // 主消息 Entry：整体文本块，头像和名字只显示一次
+        this.chatHistoryList.addMessageEntry(
+                avatarMap.get(chatOrigin),
+                playerMap.get(chatOrigin),
+                chatMsg,
+                isMine
+        );
+
+        // 如果超过两行（40字符），插入一个占位 Entry
+        if (chatMsg.length() > 40) {
+            this.chatHistoryList.addMessageEntry(
+                    null,   // 不绘制头像
+                    "",     // 不绘制名字
+                    " ",    // 空格，占位
+                    isMine
+            );
+        }
     }
+
 
     // 切换屏幕
     protected void screenComponentManager(int screenID) {
@@ -396,7 +412,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
             }
             String playerName = playerMap.get(phoneName);
             String lastMessage = lastMessageMap.get(phoneName);
-            if (lastMessageMap.get(phoneName) == null) {
+            if (lastMessageMap.get(phoneName)==null){
                 lastMessage = "";
             }
             //System.out.println("添加玩家：" + playerName);
@@ -481,12 +497,12 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 
-        long dayTime =  world.getDayTime();
-        int hour = (int)(dayTime % 24000 / 1000) + 6;
+        long dayTime = world.getDayTime();
+        int hour = (int) (dayTime % 24000 / 1000) + 6;
         if (hour >= 24) {
             hour %= 24;
         }
-        int minute =(int) (dayTime % 1000 /16.7f);
+        int minute = (int) (dayTime % 1000 / 20);
         String time = String.format("%02d:%02d", hour, minute);
 
         guiGraphics.drawString(this.font, Component.literal(time), this.timeLabelX, 15, -12829636, false);

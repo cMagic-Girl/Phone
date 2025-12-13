@@ -30,49 +30,89 @@ public class ChatMessageEntry extends ContainerObjectSelectionList.Entry<ChatMes
     private final int avatarX ;
     private final int playerNameX ;
     private final float messageX;
+    private final boolean isMine;
+
 
     // 状态
     private boolean isHovered;
 
-    public ChatMessageEntry(ResourceLocation playerAvatar, String message, String name,boolean isMine) {
+    public ChatMessageEntry(ResourceLocation playerAvatar, String message, String name, boolean isMine) {
         this.playerAvatar = playerAvatar;
-        this.playerName = I18n.get("gui.magic_girl_phone." + name);
-        int nameWidth = CharWidthCalculator.calculateCeilWidth(playerName);
-        this.messageWidth = CharWidthCalculator.calculateChineseEquivalentWidth(message);
 
-        // 按20单位宽度拆分消息，返回每行的内容+宽度
+        // 如果 name 为空（用于后续行），就不绘制名字
+        if (name == null || name.isEmpty()) {
+            this.playerName = "";
+        } else {
+            this.playerName = I18n.get("gui.magic_girl_phone." + name);
+        }
+
+        int nameWidth = this.playerName.isEmpty() ? 0 : CharWidthCalculator.calculateCeilWidth(playerName);
+        this.messageWidth = CharWidthCalculator.calculateChineseEquivalentWidth(message);
+        this.isMine = isMine;
+
         this.messageLineDataMap = CharWidthCalculator.splitByWidthWithLineWidth(message);
         totalLines = messageLineDataMap.size();
-        System.out.println(messageWidth);
-        System.out.println(messageLineDataMap);
-        System.out.println("lines:"+totalLines);
 
         this.message = message;
+
         if (isMine) {
-            if (nameWidth ==2) {
-                this.playerNameX = 170;
-            }else {
-                this.playerNameX = 160;
-            }
+            this.playerNameX = (nameWidth == 2) ? 170 : 160;
             this.avatarX = 190;
-            this.messageX = 187.2f - this.messageWidth*8.9f;
-        }else {
+            this.messageX = 187.2f - this.messageWidth * 8.9f;
+        } else {
             this.avatarX = 2;
             this.playerNameX = 30;
             this.messageX = 30.0f;
         }
     }
 
+
     @Override
-    public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovered, float partialTick) {
+    public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height,
+                       int mouseX, int mouseY, boolean hovered, float partialTick) {
         this.isHovered = hovered;
         renderBackground(guiGraphics, left, top, width, height);
-        RenderSystem.enableBlend(); // 透明头像适配
-        guiGraphics.drawString(this.font, this.playerName, left + playerNameX, top + 3 , 0xFFFFFF);
-        guiGraphics.drawString(this.font, message, left + this.messageX, top + 16.0f , 0xFFFFFF, false);
-        guiGraphics.blit(this.playerAvatar, left + avatarX, top + 3, 0, 0, 25, 25, 25, 25);
+        RenderSystem.enableBlend();
+
+        // 只有非空名字才绘制
+        if (this.playerName != null && !this.playerName.isEmpty()) {
+            guiGraphics.drawString(this.font, this.playerName, left + playerNameX, top + 3, 0xFFFFFF);
+        }
+
+        // 文本绘制（换行 + 占位行判断）
+        int maxCharsPerLine = 20; // 保持和行宽设定一致(34?)
+        int yText = top + 16;
+
+        // 如果是占位消息（只有空格），直接跳过绘制文字，只占高度
+        if (message.trim().isEmpty()) {
+            yText += this.font.lineHeight;
+        } else {
+            for (int i = 0; i < message.length(); i += maxCharsPerLine) {
+                int end = Math.min(i + maxCharsPerLine, message.length());
+                String line = message.substring(i, end);
+
+                int xText;
+                if (isMine) {
+                    int rightBoundary = left + avatarX - 3;
+                    int lineWidthPx = font.width(line);
+                    xText = rightBoundary - lineWidthPx;
+                } else {
+                    xText = left + 30;
+                }
+
+                guiGraphics.drawString(this.font, line, xText, yText, 0xFFFFFF, false);
+                yText += this.font.lineHeight;
+            }
+        }
+
+        // 只有非空头像才绘制
+        if (this.playerAvatar != null) {
+            guiGraphics.blit(this.playerAvatar, left + avatarX, top + 3, 0, 0, 25, 25, 25, 25);
+        }
+
         RenderSystem.disableBlend();
     }
+
 
     private void renderBackground(GuiGraphics guiGraphics, int left, int top, int width, int height) {
         int bgColor = 0;
