@@ -80,7 +80,7 @@ public class ChatMessageEntry extends ContainerObjectSelectionList.Entry<ChatMes
         }
 
         // 文本绘制（换行 + 占位行判断）
-        int maxCharsPerLine = 20; // 保持和你的行宽设定一致
+        int maxCharsPerLine = 20; // 保持和行宽设定一致(34?)
         int yText = top + 16;
 
         // 如果是占位消息（只有空格），直接跳过绘制文字，只占高度
@@ -112,8 +112,6 @@ public class ChatMessageEntry extends ContainerObjectSelectionList.Entry<ChatMes
 
         RenderSystem.disableBlend();
     }
-
-
 
 
     private void renderBackground(GuiGraphics guiGraphics, int left, int top, int width, int height) {
