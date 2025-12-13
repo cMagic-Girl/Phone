@@ -17,6 +17,7 @@ public class ChatHistoryList extends ContainerObjectSelectionList<ChatMessageEnt
 
     }
 
+
     public void clear() {
         this.clearEntries();
     }

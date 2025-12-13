@@ -245,7 +245,7 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
                 18, // 高度
                 Component.translatable("gui.magic_girl_phone.phone_screen.message")// 提示文本
         );
-        this.messageInputBox.setMaxLength(40);
+        this.messageInputBox.setMaxLength(80);
         this.messageInputBox.setResponder(content -> {
             //if (!menuStateUpdateActive)
             //menu.sendMenuStateUpdate(entity, 0, "message", content, false);
@@ -320,10 +320,26 @@ public class PhoneScreen extends AbstractContainerScreen<PhoneMenu> implements M
 
     public void chatHistoryAdd(String chatOrigin, String chatTarget, String chatMsg) {
         boolean isMine = chatOrigin.equals(this.phoneName);
-        System.out.println("is Mine:"+isMine);
-        this.chatHistoryList.addMessageEntry(avatarMap.get(chatOrigin), playerMap.get(chatOrigin), chatMsg, isMine);
 
+        // 主消息 Entry：整体文本块，头像和名字只显示一次
+        this.chatHistoryList.addMessageEntry(
+                avatarMap.get(chatOrigin),
+                playerMap.get(chatOrigin),
+                chatMsg,
+                isMine
+        );
+
+        // 如果超过两行（40字符），插入一个占位 Entry
+        if (chatMsg.length() > 40) {
+            this.chatHistoryList.addMessageEntry(
+                    null,   // 不绘制头像
+                    "",     // 不绘制名字
+                    " ",    // 空格，占位
+                    isMine
+            );
+        }
     }
+
 
     // 切换屏幕
     protected void screenComponentManager(int screenID) {
